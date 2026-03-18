@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -23,8 +24,6 @@ func main() {
 	}
 	defer grampsFile.Close()
 
-	// dec := xml.NewDecoder(grampsFile)
-
 	xmlBytes, err := io.ReadAll(grampsFile)
 	if err != nil {
 		exitError(err)
@@ -33,12 +32,16 @@ func main() {
 	db := gramps.Database{}
 
 	err = xml.Unmarshal(xmlBytes, &db)
-	// err = dec.Decode(&db)
 	if err != nil {
 		exitError(err)
 	}
 
-	fmt.Printf("%#v\n", db)
+	asJSON, err := json.Marshal(db)
+	if err != nil {
+		exitError(err)
+	}
+
+	fmt.Println(string(asJSON))
 }
 
 func exitError(err error) {
