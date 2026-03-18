@@ -52,17 +52,22 @@ type Primary struct {
 
 type Event struct {
 	Primary
-	Type        string      `xml:"type"`
-	Date        DateVal     `xml:"dateval"`
-	PlaceRef    PlaceRef    `xml:"place"`
-	Description string      `xml:"description"`
-	CitationRef CitationRef `xml:"citationref"`
+	Type        string        `xml:"type"`
+	Date        DateVal       `xml:"dateval"`
+	Place       PlaceRef      `xml:"place"`
+	Description string        `xml:"description"`
+	Attributes  []Attribute   `xml:"attribute"`
+	Citations   []CitationRef `xml:"citationref"`
+	Notes       []NoteRef     `xml:"noteref"`
+	Media       []MediaRef    `xml:"mediaref"`
 }
 
 type EventRef struct {
-	Handle     string      `xml:"hlink,attr"`
-	Role       string      `xml:"role,attr"`
-	Attributes []Attribute `xml:"attribute"`
+	Handle     string        `xml:"hlink,attr"`
+	Role       string        `xml:"role,attr"`
+	Attributes []Attribute   `xml:"attribute"`
+	Citations  []CitationRef `xml:"citationref"`
+	Notes      []NoteRef     `xml:"noteref"`
 }
 
 type DateVal struct {
@@ -72,11 +77,16 @@ type DateVal struct {
 
 type Person struct {
 	Primary
-	Gender   string      `xml:"gender"`
-	Name     PersonName  `xml:"name"`
-	Events   []EventRef  `xml:"eventref"`
-	ChildOf  []FamilyRef `xml:"childof"`
-	ParentIn []FamilyRef `xml:"parentin"`
+	Gender     string        `xml:"gender"`
+	Name       PersonName    `xml:"name"`
+	ChildOf    []FamilyRef   `xml:"childof"`
+	ParentIn   []FamilyRef   `xml:"parentin"`
+	Attributes []Attribute   `xml:"attribute"`
+	Citations  []CitationRef `xml:"citationref"`
+	Events     []EventRef    `xml:"eventref"`
+	Media      []MediaRef    `xml:"mediaref"`
+	Notes      []NoteRef     `xml:"noteref"`
+	URLs       []URL         `xml:"url"`
 }
 
 type PersonRef struct {
@@ -84,26 +94,34 @@ type PersonRef struct {
 }
 
 type PersonName struct {
-	First   string  `xml:"first"`
-	Call    string  `xml:"call"`
-	Nick    string  `xml:"nick"`
-	Surname string  `xml:"surname"`
-	Suffix  string  `xml:"suffix"`
-	DateStr DateVal `xml:"datestr"`
+	First     string        `xml:"first"`
+	Call      string        `xml:"call"`
+	Nick      string        `xml:"nick"`
+	Surname   string        `xml:"surname"`
+	Suffix    string        `xml:"suffix"`
+	DateStr   DateVal       `xml:"datestr"`
+	Citations []CitationRef `xml:"citationref"`
+	Notes     []NoteRef     `xml:"noteref"`
 }
 
 type Attribute struct {
-	Type  string `xml:"type,attr"`
-	Value string `xml:"value,attr"`
+	Type      string        `xml:"type,attr"`
+	Value     string        `xml:"value,attr"`
+	Citations []CitationRef `xml:"citationref"`
+	Notes     []NoteRef     `xml:"noteref"`
 }
 
 type Family struct {
 	Primary
-	Rel      Rel         `xml:"rel"`
-	Father   PersonRef   `xml:"father"`
-	Mother   PersonRef   `xml:"mother"`
-	Events   []EventRef  `xml:"eventref"`
-	Children []PersonRef `xml:"childref"`
+	Rel        Rel           `xml:"rel"`
+	Father     PersonRef     `xml:"father"`
+	Mother     PersonRef     `xml:"mother"`
+	Children   []PersonRef   `xml:"childref"`
+	Attributes []Attribute   `xml:"attribute"`
+	Citations  []CitationRef `xml:"citationref"`
+	Events     []EventRef    `xml:"eventref"`
+	Media      []MediaRef    `xml:"mediaref"`
+	Notes      []NoteRef     `xml:"noteref"`
 }
 
 type FamilyRef struct {
@@ -116,12 +134,13 @@ type Rel struct {
 
 type Citation struct {
 	Primary
-	Date       DateVal     `xml:"datestr"`
 	Page       string      `xml:"page"`
 	Confidence uint8       `xml:"confidence"`
+	Date       DateVal     `xml:"datestr"`
+	Attributes []Attribute `xml:"attribute"`
 	Media      []MediaRef  `xml:"mediaref"`
-	Sources    []SourceRef `xml:"sourceref"`
 	Notes      []NoteRef   `xml:"noteref"`
+	Sources    []SourceRef `xml:"sourceref"`
 }
 
 type CitationRef struct {
@@ -133,6 +152,7 @@ type Source struct {
 	Title        string          `xml:"stitle"`
 	Author       string          `xml:"sauthor"`
 	PubInfo      string          `xml:"spubinfo"`
+	Attributes   []Attribute     `xml:"attribute"`
 	Media        []MediaRef      `xml:"mediaref"`
 	Notes        []NoteRef       `xml:"noteref"`
 	Repositories []RepositoryRef `xml:"reporef"`
@@ -144,10 +164,14 @@ type SourceRef struct {
 
 type Place struct {
 	Primary
-	Type          string      `xml:"type,attr"`
-	Name          PlaceName   `xml:"pname"`
-	Coordinates   Coordinates `xml:"coord"`
-	EncompassedBy []PlaceRef  `xml:"placeref"`
+	Type          string        `xml:"type,attr"`
+	Name          PlaceName     `xml:"pname"`
+	Coordinates   Coordinates   `xml:"coord"`
+	EncompassedBy []PlaceRef    `xml:"placeref"`
+	Citations     []CitationRef `xml:"citationref"`
+	Media         []MediaRef    `xml:"mediaref"`
+	Notes         []NoteRef     `xml:"noteref"`
+	URLs          []URL         `xml:"url"`
 }
 
 type PlaceRef struct {
@@ -166,8 +190,11 @@ type PlaceName struct {
 
 type Media struct {
 	Primary
-	File MediaFile `xml:"file"`
-	Date DateVal   `xml:"dateval"`
+	File       MediaFile     `xml:"file"`
+	Date       DateVal       `xml:"dateval"`
+	Attributes []Attribute   `xml:"attribute"`
+	Citations  []CitationRef `xml:"citationref"`
+	Notes      []NoteRef     `xml:"noteref"`
 }
 
 type MediaRef struct {
@@ -182,9 +209,14 @@ type MediaFile struct {
 }
 type Repository struct {
 	Primary
-	Name string `xml:"rname"`
-	Type string `xml:"type"`
-	URLs []URL  `xml:"url"`
+	Name      string    `xml:"rname"`
+	Type      string    `xml:"type"`
+	Addresses []Address `xml:"address"`
+	Notes     []NoteRef `xml:"noteref"`
+	URLs      []URL     `xml:"url"`
+}
+
+type Address struct {
 }
 
 type RepositoryRef struct {
