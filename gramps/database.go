@@ -1,4 +1,4 @@
-// Package gramps implements Gramps data structures.
+// Package gramps unmarshals Gramps data structures from XML.
 package gramps
 
 import (
@@ -151,8 +151,8 @@ type Place struct {
 }
 
 type PlaceRef struct {
-	Handle string `xml:"hlink,attr"`
-	Date DateVal `xml:"dateval"`
+	Handle string  `xml:"hlink,attr"`
+	Date   DateVal `xml:"dateval"`
 }
 
 type Coordinates struct {
@@ -166,14 +166,25 @@ type PlaceName struct {
 
 type Media struct {
 	Primary
+	File MediaFile `xml:"file"`
+	Date DateVal   `xml:"dateval"`
 }
 
 type MediaRef struct {
 	Handle string `xml:"hlink,attr"`
 }
 
+type MediaFile struct {
+	Source      string `xml:"src,attr"`
+	Mime        string `xml:"mime,attr"`
+	Description string `xml:"description,attr"`
+	Checksum    string `xml:"checksum,attr"`
+}
 type Repository struct {
 	Primary
+	Name string `xml:"rname"`
+	Type string `xml:"type"`
+	URLs []URL  `xml:"url"`
 }
 
 type RepositoryRef struct {
@@ -182,8 +193,14 @@ type RepositoryRef struct {
 	Notes  []NoteRef `xml:"noteref"`
 }
 
+type URL struct {
+	HREF string `xml:"href,attr"`
+	Type string `xml:"type,attr"`
+}
 type Note struct {
 	Primary
+	Type string `xml:"type,attr"`
+	Text string `xml:"text"`
 }
 
 type NoteRef struct {
