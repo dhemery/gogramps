@@ -37,7 +37,12 @@ func main() {
 		exitError(err)
 	}
 
-	genDB := adapter.Adapt(db)
+	converter := adapter.NewConverter(db)
+	genDB, err := converter.Convert()
+	if err != nil {
+		exitError(err)
+	}
+
 	asJSON, err := json.Marshal(genDB)
 
 	if err != nil {
