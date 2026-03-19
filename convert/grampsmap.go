@@ -1,25 +1,8 @@
-// Package adapter converts Gramps data into Gen data.
-package adapter
+package convert
 
 import (
-	"fmt"
-	"time"
-
-	"dhemery.com/gogramps/gen"
 	"dhemery.com/gogramps/gramps"
 )
-
-type Converter struct {
-	Gramps *GrampsMap
-	Gen    *gen.DB
-}
-
-func NewConverter(in *gramps.Database) *Converter {
-	return &Converter{
-		Gramps: NewGrampsMap(in),
-		Gen:    gen.NewDB(),
-	}
-}
 
 type GrampsMap struct {
 	Header gramps.Header
@@ -36,50 +19,7 @@ type GrampsMap struct {
 	Sources      map[string]*gramps.Source
 }
 
-func (c *Converter) Convert() (*gen.DB, error) {
-	out := c.Gen
-	for handle := range c.Gramps.People {
-		out.People[handle] = &gen.Person{}
-	}
-
-	for handle, in := range c.Gramps.People {
-		out, ok := c.Gen.People[handle]
-		if !ok {
-			return nil, fmt.Errorf("converting %v: gen DB has no such person", handle)
-		}
-		if err := c.convertPerson(in, out); err != nil {
-			return nil, err
-		}
-	}
-
-	return out, nil
-}
-
-func (c *Converter) convertPerson(in *gramps.Person, out *gen.Person) error {
-	inName := in.Name
-	outName := gen.PersonName{
-		First:   inName.First,
-		Surname: inName.Surname,
-		Suffix:  inName.Suffix,
-		Call:    inName.Call,
-		Nick:    inName.Nick,
-	}
-
-	out.Primary = convertPrimary(in.Primary)
-	out.Name = outName
-	out.Gender = in.Gender
-	return nil
-}
-
-func convertPrimary(in gramps.Primary) gen.Primary {
-	return gen.Primary{
-		Handle:  in.Handle,
-		ID:      in.ID,
-		Changed: time.Unix(int64(in.Change), 0),
-	}
-}
-
-func NewGrampsMap(grampsDB *gramps.Database) *GrampsMap {
+func NewGrampsMap(grampsDB *gramps.DB) *GrampsMap {
 	m := &GrampsMap{
 		Header:       grampsDB.Header,
 		Tags:         grampsDB.Tags,

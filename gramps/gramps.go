@@ -5,11 +5,10 @@ import (
 	"encoding/xml"
 )
 
-type Database struct {
-	XMLName xml.Name `xml:"database"`
-	Header  Header
-	Tags    []Tag `xml:"tags>tag"`
-
+type DB struct {
+	XMLName      xml.Name `xml:"database"`
+	Header       Header
+	Tags         []Tag        `xml:"tags>tag"`
 	Citations    []Citation   `xml:"citations>citation"`
 	Events       []Event      `xml:"events>event"`
 	Families     []Family     `xml:"families>family"`
