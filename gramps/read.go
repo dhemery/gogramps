@@ -2,6 +2,7 @@ package gramps
 
 import (
 	"encoding/xml"
+	"errors"
 	"io"
 	"os"
 
@@ -30,4 +31,24 @@ func Read(fname string) (*gen.DB, error) {
 
 	return genDB, err
 
+}
+
+var ErrHasUnknown = errors.New("has unknown fields or attrs")
+
+// Unknown collects and reports unknown XML fields and attributes.
+type Unknown struct {
+	UnknownFields []UnknownField `xml:",any"`
+	UnknownAttrs  []string       `xml:",any,attr"`
+}
+
+type UnknownField struct {
+	XMLName xml.Name
+	Value   string `xml:",innerxml"`
+}
+
+func (u Unknown) CheckUnknown() error {
+	if len(u.UnknownFields) > 0 || len(u.UnknownAttrs) > 0 {
+		return ErrHasUnknown
+	}
+	return nil
 }
