@@ -63,12 +63,16 @@ type NoteRef struct {
 }
 
 type PersonName struct {
+	Unknown
+	Privacy
+	Type      string        `xml:"type,attr"`
+	Title     string        `xml:"title"`
 	First     string        `xml:"first"`
-	Call      string        `xml:"call"`
-	Nick      string        `xml:"nick"`
 	Surname   string        `xml:"surname"`
 	Suffix    string        `xml:"suffix"`
 	DateStr   DateVal       `xml:"datestr"`
+	Call      string        `xml:"call"`
+	Nick      string        `xml:"nick"`
 	Citations []CitationRef `xml:"citationref"`
 	Notes     []NoteRef     `xml:"noteref"`
 }
@@ -81,9 +85,12 @@ type PlaceName struct {
 	Value string `xml:"value,attr"`
 }
 
+// PlaceRef reprents that a place is or was encompassed by an encompassing place.
 type PlaceRef struct {
-	PlaceHandle string  `xml:"hlink,attr"`
-	Date        DateVal `xml:"dateval"`
+	// Reference to the encompassing place.
+	PlaceHandle string `xml:"hlink,attr"`
+	// The date or dates of the relationship.
+	Date DateVal `xml:"dateval"`
 }
 
 // Privacy indicates whether an object is private
@@ -102,18 +109,12 @@ type SourceRef struct {
 	SourceHandle string `xml:"hlink,attr"`
 }
 
-type Tag struct {
-	TableObject
-	Name     string `xml:"name,attr"`
-	Color    string `xml:"color,attr"`
-	Priority uint   `xml:"priority,attr"`
-}
-
 type TagRef struct {
 	TagHandle string `xml:"hlink,attr"`
 }
 
-// Tags is a mix-in that collects the containing element's tag references.
+// Tags is a mix-in that collects the containing element's
+// references to tags.
 type Tags struct {
 	Tags []TagRef `xml:"tagref"`
 }

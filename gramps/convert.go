@@ -1,8 +1,8 @@
 package gramps
 
 import (
+	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"dhemery.com/gogramps/gen"
@@ -46,22 +46,37 @@ func (c *converter) convertPerson(in *Person, out *gen.Person) error {
 		return err
 	}
 
-	inName := in.Name
-	outName := gen.PersonName{
-		First:   inName.First,
-		Surname: inName.Surname,
-		Suffix:  inName.Suffix,
-		Call:    inName.Call,
-		Nick:    inName.Nick,
+	for _, inName := range in.Names {
+		outName, err := convertPersonName(inName)
+		if err != nil {
+			dumpUnknown(in)
+			return err
+		}
+		out.Names = append(out.Names, outName)
 	}
 
-	out.Primary = convertPrimary(in.PrimaryObject)
-	out.Name = outName
+	out.Primary = convertPrimary(in.PrimaryRecord)
 	out.Gender = in.Gender
 	return nil
 }
 
-func convertPrimary(in PrimaryObject) gen.Primary {
+func convertPersonName(in PersonName) (gen.PersonName, error) {
+	if err := in.CheckUnknown(); err != nil {
+		return gen.PersonName{}, err
+
+	}
+	return gen.PersonName{
+		Private: in.Private,
+		Title:   in.Title,
+		First:   in.First,
+		Surname: in.Surname,
+		Suffix:  in.Suffix,
+		Call:    in.Call,
+		Nick:    in.Nick,
+	}, nil
+}
+
+func convertPrimary(in PrimaryRecord) gen.Primary {
 	return gen.Primary{
 		ID:      in.ID,
 		Changed: time.Unix(int64(in.Change), 0),
@@ -69,5 +84,6 @@ func convertPrimary(in PrimaryObject) gen.Primary {
 }
 
 func dumpUnknown(in any) {
-	fmt.Fprintf(os.Stderr, "unknown fields or attrs: %#v", in)
+	j, _ := json.Marshal(in)
+	fmt.Println(string(j))
 }

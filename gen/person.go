@@ -3,11 +3,12 @@ package gen
 
 type Person struct {
 	Primary
-	Gender string     `json:"gender"`
-	Name   PersonName `json:"name"`
+	Gender string       `json:"gender"`
+	Names  []PersonName `json:"name"`
 }
 
 type PersonName struct {
+	Private bool   `json:"private"`
 	Title   string `json:"title,omitempty"`
 	First   string `json:"first,omitempty"`
 	Surname string `json:"surname,omitempty"`

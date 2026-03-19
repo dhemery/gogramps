@@ -23,6 +23,9 @@ func Read(fname string) (*gen.DB, error) {
 
 	grampsDB := &DB{}
 	err = xml.Unmarshal(xmlBytes, grampsDB)
+	if err != nil {
+		return nil, err
+	}
 
 	genDB, err := convert(grampsDB)
 	if err != nil {
@@ -37,8 +40,8 @@ var ErrHasUnknown = errors.New("has unknown fields or attrs")
 
 // Unknown collects and reports unknown XML fields and attributes.
 type Unknown struct {
-	UnknownFields []UnknownField `xml:",any"`
-	UnknownAttrs  []string       `xml:",any,attr"`
+	UnknownFields []UnknownField `xml:",any" json:",omitempty"`
+	UnknownAttrs  []string       `xml:",any,attr" json:",omitempty"`
 }
 
 type UnknownField struct {

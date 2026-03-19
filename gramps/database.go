@@ -5,22 +5,6 @@ import (
 	"encoding/xml"
 )
 
-// A TableObject is an object stored in its own record in a Gramps table.
-type TableObject struct {
-	// Identifes the record in the table.
-	Handle string `xml:"handle,attr"`
-	// The date and time of the latest update,
-	// represented as a number of seconds since the Unix epoch.
-	Change uint64 `xml:"change,attr"`
-}
-
-// A PrimaryObject represents one of Gramps's fundamental genealogical record types.
-type PrimaryObject struct {
-	TableObject
-	Privacy
-	Tags
-	ID string `xml:"id,attr"`
-}
 
 type DB struct {
 	XMLName xml.Name `xml:"database"`

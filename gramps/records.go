@@ -1,7 +1,25 @@
 package gramps
 
+// Record is a mix-in for the fields common to all records in a Gramps database.
+type Record struct {
+	// Identifes the record in the table.
+	Handle string `xml:"handle,attr"`
+	// The date and time of the latest update,
+	// represented as a number of seconds since the Unix epoch.
+	Change uint64 `xml:"change,attr"`
+}
+
+// PrimaryRecord is a mix-in for the fields common to all Gramps primary record types.
+type PrimaryRecord struct {
+	Record
+	Privacy
+	Tags
+	// The object's Gramps ID.
+	ID string `xml:"id,attr"`
+}
+
 type Citation struct {
-	PrimaryObject
+	PrimaryRecord
 	Page       string      `xml:"page"`
 	Confidence uint8       `xml:"confidence"`
 	Date       DateVal     `xml:"datestr"`
@@ -12,7 +30,7 @@ type Citation struct {
 }
 
 type Event struct {
-	PrimaryObject
+	PrimaryRecord
 	Type        string        `xml:"type"`
 	Date        DateVal       `xml:"dateval"`
 	Place       PlaceRef      `xml:"place"`
@@ -24,8 +42,8 @@ type Event struct {
 }
 
 type Family struct {
-	PrimaryObject
-	Rel        FamilyType           `xml:"rel"`
+	PrimaryRecord
+	Rel        FamilyType    `xml:"rel"`
 	Father     PersonRef     `xml:"father"`
 	Mother     PersonRef     `xml:"mother"`
 	Children   []PersonRef   `xml:"childref"`
@@ -37,7 +55,7 @@ type Family struct {
 }
 
 type Media struct {
-	PrimaryObject
+	PrimaryRecord
 	File       MediaFile     `xml:"file"`
 	Date       DateVal       `xml:"dateval"`
 	Attributes []Attribute   `xml:"attribute"`
@@ -46,17 +64,17 @@ type Media struct {
 }
 
 type Note struct {
-	PrimaryObject
+	PrimaryRecord
 	Type string `xml:"type,attr"`
 	Text string `xml:"text"`
 }
 
 type Person struct {
-	PrimaryObject
+	PrimaryRecord
 	Unknown
 	Privacy
 	Gender        string         `xml:"gender"`
-	Name          PersonName     `xml:"name"`
+	Names         []PersonName   `xml:"name"`
 	Addresses     []Address      `xml:"address"`
 	Associations  []PersonRef    `xml:"personref"`
 	ChildOf       []FamilyRef    `xml:"childof"`
@@ -71,7 +89,7 @@ type Person struct {
 }
 
 type Place struct {
-	PrimaryObject
+	PrimaryRecord
 	Type          string        `xml:"type,attr"`
 	Name          PlaceName     `xml:"pname"`
 	Coordinates   Coordinates   `xml:"coord"`
@@ -82,8 +100,15 @@ type Place struct {
 	URLs          []URL         `xml:"url"`
 }
 
+type Tag struct {
+	Record
+	Name     string `xml:"name,attr"`
+	Color    string `xml:"color,attr"`
+	Priority uint   `xml:"priority,attr"`
+}
+
 type Repository struct {
-	PrimaryObject
+	PrimaryRecord
 	Name      string    `xml:"rname"`
 	Type      string    `xml:"type"`
 	Addresses []Address `xml:"address"`
@@ -92,7 +117,7 @@ type Repository struct {
 }
 
 type Source struct {
-	PrimaryObject
+	PrimaryRecord
 	Title        string          `xml:"stitle"`
 	Author       string          `xml:"sauthor"`
 	PubInfo      string          `xml:"spubinfo"`
@@ -101,4 +126,3 @@ type Source struct {
 	Notes        []NoteRef       `xml:"noteref"`
 	Repositories []RepositoryRef `xml:"reporef"`
 }
-
