@@ -8,10 +8,15 @@ import (
 
 var ErrHasUnknown = errors.New("has unknown fields or attrs")
 
+type UnknownField struct {
+	XMLName xml.Name
+	Value   string `xml:",innerxml"`
+}
+
 // Unknown collects and reports unknown XML fields and attributes.
 type Unknown struct {
-	UnknownFields []string `xml:",any"`
-	UnknownAttrs  []string `xml:",any,attr"`
+	UnknownFields []UnknownField `xml:",any"`
+	UnknownAttrs  []string       `xml:",any,attr"`
 }
 
 func (u Unknown) CheckUnknown() error {
@@ -48,7 +53,7 @@ type DB struct {
 	XMLName xml.Name `xml:"database"`
 	Unknown
 	Header
-	Tags
+	Tags         []Tag        `xml:"tags>tag"`
 	Citations    []Citation   `xml:"citations>citation"`
 	Events       []Event      `xml:"events>event"`
 	Families     []Family     `xml:"families>family"`
@@ -78,7 +83,7 @@ type Researcher struct {
 
 // Tags is a mix-in that collects the containing object's tags.
 type Tags struct {
-	Tags []Tag `xml:"tags>tag"`
+	Tags []TagRef `xml:"tagref"`
 }
 
 type Tag struct {
@@ -86,6 +91,10 @@ type Tag struct {
 	Name     string `xml:"name,attr"`
 	Color    string `xml:"color,attr"`
 	Priority uint   `xml:"priority,attr"`
+}
+
+type TagRef struct {
+	TagHandle string `xml:"hlink,attr"`
 }
 
 type Event struct {
@@ -97,7 +106,7 @@ type Event struct {
 	Attributes  []Attribute   `xml:"attribute"`
 	Citations   []CitationRef `xml:"citationref"`
 	Notes       []NoteRef     `xml:"noteref"`
-	Media       []MediaRef    `xml:"mediaref"`
+	Media       []MediaRef    `xml:"objref"`
 }
 
 type EventRef struct {
@@ -108,6 +117,7 @@ type EventRef struct {
 	Notes       []NoteRef     `xml:"noteref"`
 }
 
+// A DateVal represents a date or range of dates.
 type DateVal struct {
 	Val  string `xml:"val,attr"`
 	Type string `xml:"type,attr"`
@@ -117,16 +127,19 @@ type Person struct {
 	PrimaryObject
 	Unknown
 	Privacy
-	Gender     string        `xml:"gender"`
-	Name       PersonName    `xml:"name"`
-	ChildOf    []FamilyRef   `xml:"childof"`
-	ParentIn   []FamilyRef   `xml:"parentin"`
-	Attributes []Attribute   `xml:"attribute"`
-	Citations  []CitationRef `xml:"citationref"`
-	Events     []EventRef    `xml:"eventref"`
-	Media      []MediaRef    `xml:"mediaref"`
-	Notes      []NoteRef     `xml:"noteref"`
-	URLs       []URL         `xml:"url"`
+	Gender        string         `xml:"gender"`
+	Name          PersonName     `xml:"name"`
+	Addresses     []Address      `xml:"address"`
+	Associations  []PersonRef    `xml:"personref"`
+	ChildOf       []FamilyRef    `xml:"childof"`
+	ParentIn      []FamilyRef    `xml:"parentin"`
+	Attributes    []Attribute    `xml:"attribute"`
+	Citations     []CitationRef  `xml:"citationref"`
+	Events        []EventRef     `xml:"eventref"`
+	LdsOrdinances []LDSOrdinance `xml:"lds_ord"`
+	Media         []MediaRef     `xml:"objref"`
+	Notes         []NoteRef      `xml:"noteref"`
+	URLs          []URL          `xml:"url"`
 }
 
 type PersonRef struct {
@@ -142,6 +155,10 @@ type PersonName struct {
 	DateStr   DateVal       `xml:"datestr"`
 	Citations []CitationRef `xml:"citationref"`
 	Notes     []NoteRef     `xml:"noteref"`
+}
+
+// LDSOrdinance matches the `lds_ord` element. I don't use it, so just match and ignore.
+type LDSOrdinance struct {
 }
 
 type Attribute struct {
@@ -160,7 +177,7 @@ type Family struct {
 	Attributes []Attribute   `xml:"attribute"`
 	Citations  []CitationRef `xml:"citationref"`
 	Events     []EventRef    `xml:"eventref"`
-	Media      []MediaRef    `xml:"mediaref"`
+	Media      []MediaRef    `xml:"objref"`
 	Notes      []NoteRef     `xml:"noteref"`
 }
 
@@ -178,7 +195,7 @@ type Citation struct {
 	Confidence uint8       `xml:"confidence"`
 	Date       DateVal     `xml:"datestr"`
 	Attributes []Attribute `xml:"attribute"`
-	Media      []MediaRef  `xml:"mediaref"`
+	Media      []MediaRef  `xml:"objref"`
 	Notes      []NoteRef   `xml:"noteref"`
 	Sources    []SourceRef `xml:"sourceref"`
 }
@@ -193,7 +210,7 @@ type Source struct {
 	Author       string          `xml:"sauthor"`
 	PubInfo      string          `xml:"spubinfo"`
 	Attributes   []Attribute     `xml:"attribute"`
-	Media        []MediaRef      `xml:"mediaref"`
+	Media        []MediaRef      `xml:"objref"`
 	Notes        []NoteRef       `xml:"noteref"`
 	Repositories []RepositoryRef `xml:"reporef"`
 }
@@ -209,7 +226,7 @@ type Place struct {
 	Coordinates   Coordinates   `xml:"coord"`
 	EncompassedBy []PlaceRef    `xml:"placeref"`
 	Citations     []CitationRef `xml:"citationref"`
-	Media         []MediaRef    `xml:"mediaref"`
+	Media         []MediaRef    `xml:"objref"`
 	Notes         []NoteRef     `xml:"noteref"`
 	URLs          []URL         `xml:"url"`
 }
