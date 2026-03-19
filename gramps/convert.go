@@ -57,7 +57,6 @@ func (c *converter) convertPerson(in *Person, out *gen.Person) error {
 
 func convertPrimary(in Primary) gen.Primary {
 	return gen.Primary{
-		Handle:  in.Handle,
 		ID:      in.ID,
 		Changed: time.Unix(int64(in.Change), 0),
 	}

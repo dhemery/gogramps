@@ -5,9 +5,14 @@ import (
 	"encoding/xml"
 )
 
+type Unknown struct {
+	UnknownFields []string `xml:",any"`
+	UnknownAttrs  []string `xml:",any,attr"`
+}
 type DB struct {
-	XMLName      xml.Name `xml:"database"`
-	Header       Header
+	XMLName xml.Name `xml:"database"`
+	Header
+	Unknown
 	Tags         []Tag        `xml:"tags>tag"`
 	Citations    []Citation   `xml:"citations>citation"`
 	Events       []Event      `xml:"events>event"`
