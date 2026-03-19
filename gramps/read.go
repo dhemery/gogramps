@@ -4,9 +4,11 @@ import (
 	"encoding/xml"
 	"io"
 	"os"
+
+	"dhemery.com/gogramps/gen"
 )
 
-func Read(fname string) (*DB, error) {
+func Read(fname string) (*gen.DB, error) {
 	grampsFile, err := os.Open(fname)
 	if err != nil {
 		return nil, err
@@ -19,9 +21,13 @@ func Read(fname string) (*DB, error) {
 	}
 
 	grampsDB := &DB{}
-
 	err = xml.Unmarshal(xmlBytes, grampsDB)
 
-	return grampsDB, err
+	genDB, err := convert(grampsDB)
+	if err != nil {
+		return nil, err
+	}
+
+	return genDB, err
 
 }

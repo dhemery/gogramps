@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 
-	"dhemery.com/gogramps/convert"
 	"dhemery.com/gogramps/gramps"
 )
 
@@ -15,17 +14,12 @@ func main() {
 		exitError(errors.New("missing file argument"))
 	}
 
-	grampsDB, err := gramps.Read(os.Args[1])
+	db, err := gramps.Read(os.Args[1])
 	if err != nil {
 		exitError(err)
 	}
 
-	genDB, err := convert.Convert(grampsDB)
-	if err != nil {
-		exitError(err)
-	}
-
-	asJSON, err := json.Marshal(genDB)
+	asJSON, err := json.Marshal(db)
 	if err != nil {
 		exitError(err)
 	}

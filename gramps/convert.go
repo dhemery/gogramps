@@ -1,24 +1,22 @@
-// Package convert converts Gramps data into Gen data.
-package convert
+package gramps
 
 import (
 	"fmt"
 	"time"
 
 	"dhemery.com/gogramps/gen"
-	"dhemery.com/gogramps/gramps"
 )
 
-func Convert(in *gramps.DB) (*gen.DB, error) {
+func convert(in *DB) (*gen.DB, error) {
 	c := &converter{
-		Gramps: NewGrampsMap(in),
+		Gramps: newPrimaryMap(in),
 		Gen:    gen.NewDB(),
 	}
 	return c.convert()
 }
 
 type converter struct {
-	Gramps *GrampsMap
+	Gramps *primaryMap
 	Gen    *gen.DB
 }
 
@@ -41,7 +39,7 @@ func (c *converter) convert() (*gen.DB, error) {
 	return out, nil
 }
 
-func (c *converter) convertPerson(in *gramps.Person, out *gen.Person) error {
+func (c *converter) convertPerson(in *Person, out *gen.Person) error {
 	inName := in.Name
 	outName := gen.PersonName{
 		First:   inName.First,
@@ -57,7 +55,7 @@ func (c *converter) convertPerson(in *gramps.Person, out *gen.Person) error {
 	return nil
 }
 
-func convertPrimary(in gramps.Primary) gen.Primary {
+func convertPrimary(in Primary) gen.Primary {
 	return gen.Primary{
 		Handle:  in.Handle,
 		ID:      in.ID,
