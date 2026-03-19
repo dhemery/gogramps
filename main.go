@@ -29,14 +29,16 @@ func main() {
 		exitError(err)
 	}
 
-	db := gramps.Database{}
+	db := new(gramps.Database)
 
-	err = xml.Unmarshal(xmlBytes, &db)
+	err = xml.Unmarshal(xmlBytes, db)
 	if err != nil {
 		exitError(err)
 	}
 
-	asJSON, err := json.Marshal(db)
+	dm := gramps.NewDataMap(db)
+	asJSON, err := json.Marshal(dm)
+
 	if err != nil {
 		exitError(err)
 	}
