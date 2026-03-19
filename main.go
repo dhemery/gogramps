@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 
+	"dhemery.com/gogramps/adapter"
 	"dhemery.com/gogramps/gramps"
 )
 
@@ -36,8 +37,8 @@ func main() {
 		exitError(err)
 	}
 
-	dm := gramps.NewDataMap(db)
-	asJSON, err := json.Marshal(dm)
+	genDB := adapter.Adapt(db)
+	asJSON, err := json.Marshal(genDB)
 
 	if err != nil {
 		exitError(err)
