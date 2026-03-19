@@ -3,17 +3,52 @@ package gramps
 
 import (
 	"encoding/xml"
+	"errors"
 )
 
+var ErrHasUnknown = errors.New("has unknown fields or attrs")
+
+// Unknown collects and reports unknown XML fields and attributes.
 type Unknown struct {
 	UnknownFields []string `xml:",any"`
 	UnknownAttrs  []string `xml:",any,attr"`
 }
+
+func (u Unknown) CheckUnknown() error {
+	if len(u.UnknownFields) > 0 || len(u.UnknownAttrs) > 0 {
+		return ErrHasUnknown
+	}
+	return nil
+}
+
+// Privacy indicates whether an object is private
+// and therefore should not be published.
+type Privacy struct {
+	Private bool `xml:"priv,attr"`
+}
+
+// A TableObject is an object stored in its own record in a Gramps table.
+type TableObject struct {
+	// Identifes the record in the table.
+	Handle string `xml:"handle,attr"`
+	// The date and time of the latest update,
+	// represented as a number of seconds since the Unix epoch.
+	Change uint64 `xml:"change,attr"`
+}
+
+// A PrimaryObject represents one of Gramps's fundamental genealogical record types.
+type PrimaryObject struct {
+	TableObject
+	Privacy
+	Tags
+	ID string `xml:"id,attr"`
+}
+
 type DB struct {
 	XMLName xml.Name `xml:"database"`
-	Header
 	Unknown
-	Tags         []Tag        `xml:"tags>tag"`
+	Header
+	Tags
 	Citations    []Citation   `xml:"citations>citation"`
 	Events       []Event      `xml:"events>event"`
 	Families     []Family     `xml:"families>family"`
@@ -41,22 +76,20 @@ type Researcher struct {
 	XMLName xml.Name `xml:"researcher"`
 }
 
+// Tags is a mix-in that collects the containing object's tags.
+type Tags struct {
+	Tags []Tag `xml:"tags>tag"`
+}
+
 type Tag struct {
-	Handle   string `xml:"handle,attr"`
-	Change   uint64 `xml:"change,attr"`
+	TableObject
 	Name     string `xml:"name,attr"`
 	Color    string `xml:"color,attr"`
 	Priority uint   `xml:"priority,attr"`
 }
 
-type Primary struct {
-	Handle string `xml:"handle,attr"`
-	Change uint64 `xml:"change,attr"`
-	ID     string `xml:"id,attr"`
-}
-
 type Event struct {
-	Primary
+	PrimaryObject
 	Type        string        `xml:"type"`
 	Date        DateVal       `xml:"dateval"`
 	Place       PlaceRef      `xml:"place"`
@@ -68,11 +101,11 @@ type Event struct {
 }
 
 type EventRef struct {
-	Handle     string        `xml:"hlink,attr"`
-	Role       string        `xml:"role,attr"`
-	Attributes []Attribute   `xml:"attribute"`
-	Citations  []CitationRef `xml:"citationref"`
-	Notes      []NoteRef     `xml:"noteref"`
+	EventHandle string        `xml:"hlink,attr"`
+	Role        string        `xml:"role,attr"`
+	Attributes  []Attribute   `xml:"attribute"`
+	Citations   []CitationRef `xml:"citationref"`
+	Notes       []NoteRef     `xml:"noteref"`
 }
 
 type DateVal struct {
@@ -81,7 +114,9 @@ type DateVal struct {
 }
 
 type Person struct {
-	Primary
+	PrimaryObject
+	Unknown
+	Privacy
 	Gender     string        `xml:"gender"`
 	Name       PersonName    `xml:"name"`
 	ChildOf    []FamilyRef   `xml:"childof"`
@@ -95,7 +130,7 @@ type Person struct {
 }
 
 type PersonRef struct {
-	Handle string `xml:"hlink,attr"`
+	PersonHandle string `xml:"hlink,attr"`
 }
 
 type PersonName struct {
@@ -117,7 +152,7 @@ type Attribute struct {
 }
 
 type Family struct {
-	Primary
+	PrimaryObject
 	Rel        Rel           `xml:"rel"`
 	Father     PersonRef     `xml:"father"`
 	Mother     PersonRef     `xml:"mother"`
@@ -130,7 +165,7 @@ type Family struct {
 }
 
 type FamilyRef struct {
-	Handle string `xml:"hlink,attr"`
+	FamilyHandle string `xml:"hlink,attr"`
 }
 
 type Rel struct {
@@ -138,7 +173,7 @@ type Rel struct {
 }
 
 type Citation struct {
-	Primary
+	PrimaryObject
 	Page       string      `xml:"page"`
 	Confidence uint8       `xml:"confidence"`
 	Date       DateVal     `xml:"datestr"`
@@ -149,11 +184,11 @@ type Citation struct {
 }
 
 type CitationRef struct {
-	Handle string `xml:"hlink,attr"`
+	CitationHandle string `xml:"hlink,attr"`
 }
 
 type Source struct {
-	Primary
+	PrimaryObject
 	Title        string          `xml:"stitle"`
 	Author       string          `xml:"sauthor"`
 	PubInfo      string          `xml:"spubinfo"`
@@ -164,11 +199,11 @@ type Source struct {
 }
 
 type SourceRef struct {
-	Handle string `xml:"hlink,attr"`
+	SourceHandle string `xml:"hlink,attr"`
 }
 
 type Place struct {
-	Primary
+	PrimaryObject
 	Type          string        `xml:"type,attr"`
 	Name          PlaceName     `xml:"pname"`
 	Coordinates   Coordinates   `xml:"coord"`
@@ -180,8 +215,8 @@ type Place struct {
 }
 
 type PlaceRef struct {
-	Handle string  `xml:"hlink,attr"`
-	Date   DateVal `xml:"dateval"`
+	PlaceHandle string  `xml:"hlink,attr"`
+	Date        DateVal `xml:"dateval"`
 }
 
 type Coordinates struct {
@@ -194,7 +229,7 @@ type PlaceName struct {
 }
 
 type Media struct {
-	Primary
+	PrimaryObject
 	File       MediaFile     `xml:"file"`
 	Date       DateVal       `xml:"dateval"`
 	Attributes []Attribute   `xml:"attribute"`
@@ -203,7 +238,7 @@ type Media struct {
 }
 
 type MediaRef struct {
-	Handle string `xml:"hlink,attr"`
+	MediaHandle string `xml:"hlink,attr"`
 }
 
 type MediaFile struct {
@@ -213,7 +248,7 @@ type MediaFile struct {
 	Checksum    string `xml:"checksum,attr"`
 }
 type Repository struct {
-	Primary
+	PrimaryObject
 	Name      string    `xml:"rname"`
 	Type      string    `xml:"type"`
 	Addresses []Address `xml:"address"`
@@ -225,9 +260,9 @@ type Address struct {
 }
 
 type RepositoryRef struct {
-	Handle string    `xml:"hlink,attr"`
-	Medium string    `xml:"medium,attr"`
-	Notes  []NoteRef `xml:"noteref"`
+	RepositoryHandle string    `xml:"hlink,attr"`
+	Medium           string    `xml:"medium,attr"`
+	Notes            []NoteRef `xml:"noteref"`
 }
 
 type URL struct {
@@ -235,11 +270,11 @@ type URL struct {
 	Type string `xml:"type,attr"`
 }
 type Note struct {
-	Primary
+	PrimaryObject
 	Type string `xml:"type,attr"`
 	Text string `xml:"text"`
 }
 
 type NoteRef struct {
-	Handle string `xml:"hlink,attr"`
+	NoteHandle string `xml:"hlink,attr"`
 }

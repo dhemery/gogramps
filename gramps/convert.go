@@ -2,6 +2,7 @@ package gramps
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"dhemery.com/gogramps/gen"
@@ -40,6 +41,11 @@ func (c *converter) convert() (*gen.DB, error) {
 }
 
 func (c *converter) convertPerson(in *Person, out *gen.Person) error {
+	if err := in.CheckUnknown(); err != nil {
+		dumpUnknown(in)
+		return err
+	}
+
 	inName := in.Name
 	outName := gen.PersonName{
 		First:   inName.First,
@@ -49,15 +55,19 @@ func (c *converter) convertPerson(in *Person, out *gen.Person) error {
 		Nick:    inName.Nick,
 	}
 
-	out.Primary = convertPrimary(in.Primary)
+	out.Primary = convertPrimary(in.PrimaryObject)
 	out.Name = outName
 	out.Gender = in.Gender
 	return nil
 }
 
-func convertPrimary(in Primary) gen.Primary {
+func convertPrimary(in PrimaryObject) gen.Primary {
 	return gen.Primary{
 		ID:      in.ID,
 		Changed: time.Unix(int64(in.Change), 0),
 	}
+}
+
+func dumpUnknown(in any) {
+	fmt.Fprintf(os.Stderr, "unknown fields or attrs: %#v", in)
 }
