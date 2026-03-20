@@ -57,7 +57,6 @@ type MediaFile struct {
 type MediaRef struct {
 	MediaHandle string `xml:"hlink,attr"`
 }
-
 type NoteRef struct {
 	NoteHandle string `xml:"hlink,attr"`
 }
@@ -65,16 +64,18 @@ type NoteRef struct {
 type PersonName struct {
 	Unknown
 	Privacy
-	Type      string        `xml:"type,attr"`
-	Title     string        `xml:"title"`
-	First     string        `xml:"first"`
-	Surname   string        `xml:"surname"`
-	Suffix    string        `xml:"suffix"`
-	DateStr   DateVal       `xml:"datestr"`
-	Call      string        `xml:"call"`
-	Nick      string        `xml:"nick"`
-	Citations []CitationRef `xml:"citationref"`
-	Notes     []NoteRef     `xml:"noteref"`
+	Type       string        `xml:"type,attr"`
+	Alt        string        `xml:"alt,attr"`
+	Title      string        `xml:"title"`
+	First      string        `xml:"first"`
+	Surname    string        `xml:"surname"`
+	Suffix     string        `xml:"suffix"`
+	Date       []DateVal     `xml:"dateval"`
+	Call       string        `xml:"call"`
+	Nick       string        `xml:"nick"`
+	FamilyNick string        `xml:"familynick"`
+	Citations  []CitationRef `xml:"citationref"`
+	Notes      []NoteRef     `xml:"noteref"`
 }
 
 type PersonRef struct {
@@ -90,7 +91,7 @@ type PlaceRef struct {
 	// Reference to the encompassing place.
 	PlaceHandle string `xml:"hlink,attr"`
 	// The date or dates of the relationship.
-	Date DateVal `xml:"dateval"`
+	Date []DateVal `xml:"dateval"`
 }
 
 // Privacy indicates whether an object is private

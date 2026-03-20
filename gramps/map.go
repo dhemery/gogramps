@@ -2,6 +2,7 @@ package gramps
 
 // A primaryMap is a map of the Gramps "primary" objects, indexed by their handles.
 type primaryMap struct {
+	HomePerson   *Person
 	Citations    map[string]*Citation
 	Events       map[string]*Event
 	Families     map[string]*Family
@@ -46,9 +47,10 @@ func newPrimaryMap(db *DB) *primaryMap {
 		m.Notes[item.Handle] = &item
 	}
 
-	for _, item := range db.People {
+	for _, item := range db.People.People {
 		m.People[item.Handle] = &item
 	}
+	m.HomePerson = m.People[db.People.HomePerson]
 
 	for _, item := range db.Places {
 		m.Places[item.Handle] = &item

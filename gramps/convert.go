@@ -1,7 +1,6 @@
 package gramps
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -36,22 +35,14 @@ func (c *converter) convert() (*gen.DB, error) {
 			return nil, err
 		}
 	}
+	out.HomePerson = out.People[c.Gramps.HomePerson.Handle]
 
 	return out, nil
 }
 
 func (c *converter) convertPerson(in *Person, out *gen.Person) error {
-	if err := in.CheckUnknown(); err != nil {
-		dumpUnknown(in)
-		return err
-	}
-
 	for _, inName := range in.Names {
-		outName, err := convertPersonName(inName)
-		if err != nil {
-			dumpUnknown(in)
-			return err
-		}
+		outName := convertPersonName(inName)
 		out.Names = append(out.Names, outName)
 	}
 
@@ -60,11 +51,7 @@ func (c *converter) convertPerson(in *Person, out *gen.Person) error {
 	return nil
 }
 
-func convertPersonName(in PersonName) (gen.PersonName, error) {
-	if err := in.CheckUnknown(); err != nil {
-		return gen.PersonName{}, err
-
-	}
+func convertPersonName(in PersonName) gen.PersonName{
 	return gen.PersonName{
 		Private: in.Private,
 		Title:   in.Title,
@@ -73,7 +60,7 @@ func convertPersonName(in PersonName) (gen.PersonName, error) {
 		Suffix:  in.Suffix,
 		Call:    in.Call,
 		Nick:    in.Nick,
-	}, nil
+	}
 }
 
 func convertPrimary(in PrimaryRecord) gen.Primary {
@@ -83,7 +70,3 @@ func convertPrimary(in PrimaryRecord) gen.Primary {
 	}
 }
 
-func dumpUnknown(in any) {
-	j, _ := json.Marshal(in)
-	fmt.Println(string(j))
-}

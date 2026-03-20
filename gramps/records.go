@@ -22,7 +22,7 @@ type Citation struct {
 	PrimaryRecord
 	Page       string      `xml:"page"`
 	Confidence uint8       `xml:"confidence"`
-	Date       DateVal     `xml:"datestr"`
+	Date      []DateVal   `xml:"datestr"`
 	Attributes []Attribute `xml:"attribute"`
 	Media      []MediaRef  `xml:"objref"`
 	Notes      []NoteRef   `xml:"noteref"`
@@ -32,7 +32,7 @@ type Citation struct {
 type Event struct {
 	PrimaryRecord
 	Type        string        `xml:"type"`
-	Date        DateVal       `xml:"dateval"`
+	Date       []DateVal     `xml:"dateval"`
 	Place       PlaceRef      `xml:"place"`
 	Description string        `xml:"description"`
 	Attributes  []Attribute   `xml:"attribute"`
@@ -57,7 +57,7 @@ type Family struct {
 type Media struct {
 	PrimaryRecord
 	File       MediaFile     `xml:"file"`
-	Date       DateVal       `xml:"dateval"`
+	Date      []DateVal     `xml:"dateval"`
 	Attributes []Attribute   `xml:"attribute"`
 	Citations  []CitationRef `xml:"citationref"`
 	Notes      []NoteRef     `xml:"noteref"`
@@ -86,6 +86,18 @@ type Person struct {
 	Media         []MediaRef     `xml:"objref"`
 	Notes         []NoteRef      `xml:"noteref"`
 	URLs          []URL          `xml:"url"`
+}
+
+func (p Person) hasUnknowns() bool {
+	if p.Unknown.hasUnknowns() {
+		return true
+	}
+	for _, n := range p.Names {
+		if n.hasUnknowns() {
+			return true
+		}
+	}
+	return false
 }
 
 type Place struct {

@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 )
 
-
 type DB struct {
 	XMLName xml.Name `xml:"database"`
 	Unknown
@@ -16,7 +15,7 @@ type DB struct {
 	Families     []Family     `xml:"families>family"`
 	Media        []Media      `xml:"objects>object"`
 	Notes        []Note       `xml:"notes>note"`
-	People       []Person     `xml:"people>person"`
+	People       People       `xml:"people"`
 	Places       []Place      `xml:"places>placeobj"`
 	Repositories []Repository `xml:"repositories>repository"`
 	Sources      []Source     `xml:"sources>source"`
@@ -38,3 +37,31 @@ type Researcher struct {
 	XMLName xml.Name `xml:"researcher"`
 }
 
+type People struct {
+	Unknown
+	People     []Person `xml:"person"`
+
+	HomePerson string   `xml:"home,attr"`
+}
+
+func (p *People) hasUnknowns() bool {
+	return p.Unknown.hasUnknowns()
+}
+
+func (db *DB) CollectUnknowns() []any {
+	var unknowns []any
+
+	if db.People.hasUnknowns() {
+		people := db.People
+		people.People = nil
+		unknowns = append(unknowns, people)
+	}
+
+	for _, p := range db.People.People {
+		if p.hasUnknowns() {
+			unknowns = append(unknowns, p)
+		}
+	}
+
+	return unknowns
+}
