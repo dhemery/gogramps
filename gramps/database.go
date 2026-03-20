@@ -73,6 +73,9 @@ func (db *DB) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 func (db *DB) UnmarshalElement(e xml.StartElement, d *xml.Decoder) error {
 	slog.Debug("unmarshaling <database> element", "element", e.Name.Local)
 	switch e.Name.Local {
+
+	// These elements are collections of records. No need to decode them directly.
+	// The outer decoder will loop over the records, which we handle below.
 	case "citations":
 		fallthrough
 	case "events":
@@ -88,6 +91,7 @@ func (db *DB) UnmarshalElement(e xml.StartElement, d *xml.Decoder) error {
 	case "repositories":
 		fallthrough
 	case "sources":
+		// Warn of any attributes we aren't currently handling.
 		for _, a := range e.Attr {
 			if a.Name.Local == "xmlns" {
 				continue
@@ -177,6 +181,15 @@ func (db *DB) UnmarshalElement(e xml.StartElement, d *xml.Decoder) error {
 	case "tags":
 		return d.DecodeElement(&db.Tags, &e)
 
+	// Skip these elements.
+	case "bookmarks":
+		fallthrough
+	case "name-formats":
+		fallthrough
+	case "namemaps":
+		return d.Skip()
+
+	// Warn of any elements we aren't currently handling.
 	default:
 		slog.Warn("skipping unknown <database> element", "element", e.Name.Local)
 		return d.Skip()

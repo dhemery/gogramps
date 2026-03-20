@@ -1,6 +1,7 @@
 package gramps
 
 import (
+	"encoding/json/jsontext"
 	"encoding/xml"
 	"strconv"
 	"time"
@@ -9,10 +10,10 @@ import (
 // Record is a mix-in for the fields common to all records in a Gramps database.
 type Record struct {
 	// Identifes the record in the table.
-	Handle string `xml:"handle,attr"`
+	Handle string `xml:"handle,attr" json:"handle"`
 	// The date and time of the latest update,
 	// represented as a number of seconds since the Unix epoch.
-	Change ChangeDate `xml:"change,attr"`
+	Change ChangeDate `xml:"change,attr" json:"change"`
 }
 
 type ChangeDate struct {
@@ -26,6 +27,10 @@ func (d *ChangeDate) UnmarshalXMLAttr(a xml.Attr) error {
 	}
 	*d = ChangeDate{Time: time.Unix(i, 0)}
 	return nil
+}
+
+func (d *ChangeDate) MarshalJSONTo(e *jsontext.Encoder) error {
+	return e.WriteToken(jsontext.String(d.Time.String()))
 }
 
 // PrimaryRecord is a mix-in for the fields common to all Gramps primary record types.
