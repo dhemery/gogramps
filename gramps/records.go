@@ -13,24 +13,28 @@ type Record struct {
 	Handle string `xml:"handle,attr" json:"handle"`
 	// The date and time of the latest update,
 	// represented as a number of seconds since the Unix epoch.
-	Change ChangeDate `xml:"change,attr" json:"change"`
+	Change UnixTime `xml:"change,attr" json:"change"`
 }
 
-type ChangeDate struct {
-	time.Time
-}
+// UnixTime is a time represented in XML as the number of seconds since the Unix epoch,
+// and in JSON as formated by the [time.DateTime] layout.
+type UnixTime time.Time
 
-func (d *ChangeDate) UnmarshalXMLAttr(a xml.Attr) error {
+func (ut *UnixTime) UnmarshalXMLAttr(a xml.Attr) error {
 	i, err := strconv.ParseInt(a.Value, 10, 64)
 	if err != nil {
 		return err
 	}
-	*d = ChangeDate{Time: time.Unix(i, 0)}
+	*ut = UnixTime(time.Unix(i, 0))
 	return nil
 }
 
-func (d *ChangeDate) MarshalJSONTo(e *jsontext.Encoder) error {
-	return e.WriteToken(jsontext.String(d.Time.String()))
+func (ut UnixTime) MarshalJSONTo(e *jsontext.Encoder) error {
+	return e.WriteToken(jsontext.String(ut.String()))
+}
+
+func (ut UnixTime) String() string {
+	return time.Time(ut).Format(time.DateTime)
 }
 
 // PrimaryRecord is a mix-in for the fields common to all Gramps primary record types.

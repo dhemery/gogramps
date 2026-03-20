@@ -3,8 +3,10 @@ package gramps
 
 import (
 	"bytes"
+	"encoding/json/jsontext"
 	"encoding/xml"
 	"log/slog"
+	"time"
 )
 
 type DB struct {
@@ -204,9 +206,25 @@ type Header struct {
 }
 
 type Created struct {
-	Date    string `xml:"date,attr"`
+	Date    Date   `xml:"date,attr"`
 	Version string `xml:"version,attr"`
 }
 
 type Researcher struct {
+}
+
+// Date is a time represented in XML and JSON in the [time.DateOnly] layout.
+type Date time.Time
+
+func (d *Date) UnmarshalXMLAttr(a xml.Attr) error {
+	t, err := time.Parse(time.DateOnly, a.Value)
+	if err != nil {
+		return err
+	}
+	*d = Date(t)
+	return nil
+}
+
+func (d Date) MarshalJSONTo(e *jsontext.Encoder) error {
+	return e.WriteToken(jsontext.String(time.Time(d).Format(time.DateOnly)))
 }
