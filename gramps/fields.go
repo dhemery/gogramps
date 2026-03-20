@@ -62,7 +62,6 @@ type NoteRef struct {
 }
 
 type PersonName struct {
-	Unknown
 	Privacy
 	Type       string        `xml:"type,attr"`
 	Alt        string        `xml:"alt,attr"`

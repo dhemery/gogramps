@@ -1,7 +1,7 @@
 package gramps
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -29,38 +29,14 @@ func Read(fname string) (*gen.DB, error) {
 		return nil, err
 	}
 
-	unknowns := grampsDB.CollectUnknowns()
-	if len(unknowns) > 0 {
-		dump(unknowns)
-		return nil, ErrHasUnknown
-	}
-
-	genDB, err := convert(grampsDB)
+	j, err := json.Marshal(grampsDB, json.OmitZeroStructFields(true))
 	if err != nil {
 		return nil, err
 	}
 
-	return genDB, err
+	if _, err = fmt.Println(string(j)); err == nil {
+		return nil, errors.New("just parsing")
+	}
 
-}
-var ErrHasUnknown = errors.New("has unknown fields or attrs")
-
-// Unknown collects and reports unknown XML fields and attributes.
-type Unknown struct {
-	UnknownFields []UnknownField `xml:",any" json:",omitempty"`
-	UnknownAttrs  []string       `xml:",any,attr" json:",omitempty"`
-}
-
-type UnknownField struct {
-	XMLName xml.Name
-	Value   string `xml:",innerxml"`
-}
-
-func (u Unknown) hasUnknowns() bool {
-	return len(u.UnknownFields) > 0 || len(u.UnknownAttrs) > 0
-}
-
-func dump(in any) {
-	j, _ := json.Marshal(in)
-	fmt.Println(string(j))
+	return convert(grampsDB)
 }

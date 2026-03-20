@@ -1,28 +1,47 @@
 package gramps
 
+import (
+	"encoding/xml"
+	"strconv"
+	"time"
+)
+
 // Record is a mix-in for the fields common to all records in a Gramps database.
 type Record struct {
 	// Identifes the record in the table.
 	Handle string `xml:"handle,attr"`
 	// The date and time of the latest update,
 	// represented as a number of seconds since the Unix epoch.
-	Change uint64 `xml:"change,attr"`
+	Change ChangeDate `xml:"change,attr"`
+}
+
+type ChangeDate struct {
+	time.Time
+}
+
+func (d *ChangeDate) UnmarshalXMLAttr(a xml.Attr) error {
+	i, err := strconv.ParseInt(a.Value, 10, 64)
+	if err != nil {
+		return err
+	}
+	*d = ChangeDate{Time: time.Unix(i, 0)}
+	return nil
 }
 
 // PrimaryRecord is a mix-in for the fields common to all Gramps primary record types.
 type PrimaryRecord struct {
 	Record
-	Privacy
-	Tags
 	// The object's Gramps ID.
 	ID string `xml:"id,attr"`
+	Privacy
+	Tags
 }
 
 type Citation struct {
 	PrimaryRecord
 	Page       string      `xml:"page"`
 	Confidence uint8       `xml:"confidence"`
-	Date      []DateVal   `xml:"datestr"`
+	Date       []DateVal   `xml:"datestr"`
 	Attributes []Attribute `xml:"attribute"`
 	Media      []MediaRef  `xml:"objref"`
 	Notes      []NoteRef   `xml:"noteref"`
@@ -32,7 +51,7 @@ type Citation struct {
 type Event struct {
 	PrimaryRecord
 	Type        string        `xml:"type"`
-	Date       []DateVal     `xml:"dateval"`
+	Date        []DateVal     `xml:"dateval"`
 	Place       PlaceRef      `xml:"place"`
 	Description string        `xml:"description"`
 	Attributes  []Attribute   `xml:"attribute"`
@@ -57,7 +76,7 @@ type Family struct {
 type Media struct {
 	PrimaryRecord
 	File       MediaFile     `xml:"file"`
-	Date      []DateVal     `xml:"dateval"`
+	Date       []DateVal     `xml:"dateval"`
 	Attributes []Attribute   `xml:"attribute"`
 	Citations  []CitationRef `xml:"citationref"`
 	Notes      []NoteRef     `xml:"noteref"`
@@ -71,7 +90,6 @@ type Note struct {
 
 type Person struct {
 	PrimaryRecord
-	Unknown
 	Privacy
 	Gender        string         `xml:"gender"`
 	Names         []PersonName   `xml:"name"`
@@ -86,18 +104,6 @@ type Person struct {
 	Media         []MediaRef     `xml:"objref"`
 	Notes         []NoteRef      `xml:"noteref"`
 	URLs          []URL          `xml:"url"`
-}
-
-func (p Person) hasUnknowns() bool {
-	if p.Unknown.hasUnknowns() {
-		return true
-	}
-	for _, n := range p.Names {
-		if n.hasUnknowns() {
-			return true
-		}
-	}
-	return false
 }
 
 type Place struct {
