@@ -36,14 +36,14 @@ func (db *DB) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	db.Sources = map[string]*Source{}
 
 	slog.Debug("unmarshaling element", "element", start.Name.Local)
-	for {
-		for _, a := range start.Attr {
-			if a.Name.Local == "xmlns" {
-				continue
-			}
-			slog.Warn("unknown <database> attr", "attr", a.Name.Local, "value", a.Value)
+	for _, a := range start.Attr {
+		if a.Name.Local == "xmlns" {
+			continue
 		}
+		slog.Warn("unknown <database> attr", "attr", a.Name.Local, "value", a.Value)
+	}
 
+	for {
 		token, err := d.Token()
 		if err != nil {
 			return err

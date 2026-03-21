@@ -1,5 +1,10 @@
 package gramps
 
+import (
+	"encoding/xml"
+	"log/slog"
+)
+
 type Address struct {
 }
 
@@ -20,10 +25,36 @@ type Coordinates struct {
 }
 
 // A DateVal represents a date or range of dates,
-// possibly with qualifiers such as "about" or "before."
+// possibly with quality such as "estimated" or "calculated"
+// and modifiers such as "about" or "before."
 type DateVal struct {
-	Val  string `xml:"val,attr"`
-	Type string `xml:"type,attr"`
+	Quality  string
+	Modifier string
+	Date     string
+}
+
+func (dv *DateVal) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	for _, a := range start.Attr {
+		name := a.Name.Local
+		if name == "xmlns" {
+			continue
+		}
+		switch name {
+		case "quality":
+			dv.Quality = a.Value
+		case "type":
+			dv.Modifier = a.Value
+		case "val":
+			dv.Date = a.Value
+
+		default:
+			slog.Warn("unknown DateVal attr",
+				"attr", a.Name.Local,
+				"value", a.Value)
+		}
+	}
+	// No inner elements, so skip through the end element.
+	return d.Skip()
 }
 
 // An EventRef is a references from a person to an event in which the person played a role.
