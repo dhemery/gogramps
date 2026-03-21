@@ -214,17 +214,39 @@ type Researcher struct {
 }
 
 // Date is a time represented in XML and JSON in the [time.DateOnly] layout.
-type Date time.Time
+type Date struct {
+	time.Time
+	Layout string
+}
 
 func (d *Date) UnmarshalXMLAttr(a xml.Attr) error {
-	t, err := time.Parse(time.DateOnly, a.Value)
+	date, err := parseDate(a.Value)
 	if err != nil {
 		return err
 	}
-	*d = Date(t)
+	*d = date
 	return nil
 }
 
+var dateLayouts = []string{
+	time.DateOnly,
+	"2006-01",
+	"2006",
+}
+
+// Parse the date and record the longest layout that matches.
+func parseDate(s string) (Date, error) {
+	var err error
+	for _, layout := range dateLayouts {
+		t, err := time.Parse(layout, s)
+		if err == nil {
+			date := Date{Time: t, Layout: layout}
+			return date, nil
+		}
+	}
+	return Date{}, err
+}
+
 func (d Date) MarshalJSONTo(e *jsontext.Encoder) error {
-	return e.WriteToken(jsontext.String(time.Time(d).Format(time.DateOnly)))
+	return e.WriteToken(jsontext.String(d.Format(d.Layout)))
 }

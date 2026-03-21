@@ -30,7 +30,7 @@ type Coordinates struct {
 type DateVal struct {
 	Quality  string
 	Modifier string
-	Date     string
+	Date     Date
 }
 
 func (dv *DateVal) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -39,18 +39,22 @@ func (dv *DateVal) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 		if name == "xmlns" {
 			continue
 		}
+		line, column := d.InputPos()
 		switch name {
 		case "quality":
 			dv.Quality = a.Value
 		case "type":
 			dv.Modifier = a.Value
 		case "val":
-			dv.Date = a.Value
-
+			if err := dv.Date.UnmarshalXMLAttr(a); err != nil {
+				slog.Warn("could not parse DateVal date",
+					"line", line, "column", column,
+					"attr", a.Name.Local, "value", a.Value)
+			}
 		default:
 			slog.Warn("unknown DateVal attr",
-				"attr", a.Name.Local,
-				"value", a.Value)
+				"line", line, "column", column,
+				"attr", a.Name.Local, "value", a.Value)
 		}
 	}
 	// No inner elements, so skip through the end element.
