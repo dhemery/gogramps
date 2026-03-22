@@ -37,3 +37,16 @@ func (r *SourceRef) MarshalJSONTo(e *jsontext.Encoder) error {
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
+
+type TagRef struct {
+	Tag *Tag
+}
+
+
+func (r *TagRef) MarshalJSONTo(e *jsontext.Encoder) error {
+	var handle string
+	if r.Tag != nil {
+		handle = r.Tag.Handle
+	}
+	return e.WriteToken(jsontext.String(handle))
+}

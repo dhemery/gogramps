@@ -6,7 +6,5 @@ type Citation struct {
 	Source       SourceRef `json:"source_handle"`
 	Page         string    `json:"page"`
 	Confidence   int       `json:"confidence"`
-	// Unknown      map[string]any `json:",unknown"`
+	Tags         []TagRef  `json:"tag_list"`
 }
-
-
