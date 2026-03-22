@@ -11,102 +11,58 @@ import (
 
 func (l *loader) unmarshalRecords() error {
 	opts := grampsUnmarshalOptions(l)
-	for handle, data := range l.citationRecords {
-		citation, ok := l.citations[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no citation: %s", handle)
-		}
-		if err := json.Unmarshal(data, citation, opts); err != nil {
-			return err
-		}
+
+	if err := unmarshalRecords("citation", l.citationRecords, l.citations, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.eventRecords {
-		event, ok := l.events[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no event: %s", handle)
-		}
-		if err := json.Unmarshal(data, event, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("event", l.eventRecords, l.events, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.familyRecords {
-		family, ok := l.families[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no family: %s", handle)
-		}
-		if err := json.Unmarshal(data, family, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("family", l.familyRecords, l.families, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.mediaRecords {
-		media, ok := l.media[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no media: %s", handle)
-		}
-		if err := json.Unmarshal(data, media, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("media", l.mediaRecords, l.media, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.noteRecords {
-		note, ok := l.notes[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no note: %s", handle)
-		}
-		if err := json.Unmarshal(data, note, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("note", l.noteRecords, l.notes, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.personRecords {
-		person, ok := l.people[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no person: %s", handle)
-		}
-		if err := json.Unmarshal(data, person, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("person", l.personRecords, l.people, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.placeRecords {
-		place, ok := l.places[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no place: %s", handle)
-		}
-		if err := json.Unmarshal(data, place, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("place", l.placeRecords, l.places, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.sourceRecords {
-		source, ok := l.sources[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no source: %s", handle)
-		}
-		if err := json.Unmarshal(data, source, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("source", l.sourceRecords, l.sources, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.repositoryRecords {
-		repository, ok := l.repositories[handle]
-		if !ok {
-			return fmt.Errorf("unmarshal has record but no repository: %s", handle)
-		}
-		if err := json.Unmarshal(data, repository, opts); err != nil {
-			return err
-		}
+	if err := unmarshalRecords("repository", l.repositoryRecords, l.repositories, opts); err != nil {
+		return err
 	}
 
-	for handle, data := range l.tagRecords {
-		tag, ok := l.tags[handle]
+	if err := unmarshalRecords("tag", l.tagRecords, l.tags, opts); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func unmarshalRecords[T any](name string, records map[string][]byte, values map[string]*T, opts json.Options) error {
+	for handle, data := range records {
+		value, ok := values[handle]
 		if !ok {
-			return fmt.Errorf("unmarshal has record but no tag: %s", handle)
+			return fmt.Errorf("unmarshal: loader has %s record but no %s: %s",
+				name, name, handle)
 		}
-		if err := json.Unmarshal(data, tag, opts); err != nil {
+		if err := json.Unmarshal(data, value, opts); err != nil {
 			return err
 		}
 	}
