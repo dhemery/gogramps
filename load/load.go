@@ -13,6 +13,9 @@ func Gen(fname string) (*gen.Gen, error) {
 		return nil, err
 	}
 
+	if err := l.unmarshalRecords(); err != nil {
+		return nil, err
+	}
 	// TO DO: Unmarshal each record and resolve references.
 
 	return l.gen, nil
@@ -32,31 +35,31 @@ type loader struct {
 	sources      map[string]*gen.Source
 	tags         map[string]*gen.Tag
 
-	citationRecords   map[string]string
-	eventRecords      map[string]string
-	familyRecords     map[string]string
-	mediaRecords      map[string]string
-	noteRecords       map[string]string
-	personRecords     map[string]string
-	placeRecords      map[string]string
-	repositoryRecords map[string]string
-	sourceRecords     map[string]string
-	tagRecords        map[string]string
+	citationRecords   map[string][]byte
+	eventRecords      map[string][]byte
+	familyRecords     map[string][]byte
+	mediaRecords      map[string][]byte
+	noteRecords       map[string][]byte
+	personRecords     map[string][]byte
+	placeRecords      map[string][]byte
+	repositoryRecords map[string][]byte
+	sourceRecords     map[string][]byte
+	tagRecords        map[string][]byte
 }
 
 func newLoader() *loader {
 	return &loader{
 		gen:               new(gen.Gen),
-		citationRecords:   map[string]string{},
-		eventRecords:      map[string]string{},
-		familyRecords:     map[string]string{},
-		mediaRecords:      map[string]string{},
-		noteRecords:       map[string]string{},
-		personRecords:     map[string]string{},
-		placeRecords:      map[string]string{},
-		repositoryRecords: map[string]string{},
-		sourceRecords:     map[string]string{},
-		tagRecords:        map[string]string{},
+		citationRecords:   map[string][]byte{},
+		eventRecords:      map[string][]byte{},
+		familyRecords:     map[string][]byte{},
+		mediaRecords:      map[string][]byte{},
+		noteRecords:       map[string][]byte{},
+		personRecords:     map[string][]byte{},
+		placeRecords:      map[string][]byte{},
+		repositoryRecords: map[string][]byte{},
+		sourceRecords:     map[string][]byte{},
+		tagRecords:        map[string][]byte{},
 
 		citations:    map[string]*gen.Citation{},
 		events:       map[string]*gen.Event{},
@@ -78,7 +81,7 @@ func (l *loader) load(fname string) error {
 	}
 	defer db.Close()
 
-	citationRecords, err := l.readRecords(db, "person")
+	citationRecords, err := l.readRecords(db, "citation")
 	l.citationRecords = citationRecords
 	if err != nil {
 		return err
@@ -201,7 +204,9 @@ func (l *loader) load(fname string) error {
 	return nil
 }
 
-func (l *loader) readRecords(db *sql.DB, tableName string) (map[string]string, error) {
+// readRecords reads all records from the named table into a map. The map's key is the
+// record's handle field and the value is the record's json_data field.
+func (l *loader) readRecords(db *sql.DB, tableName string) (map[string][]byte, error) {
 	// Every record type has a handle, json_data, and other fields specific
 	// to the subject. But the JSON has all of that data and more, so we
 	// can ignore the fields and reconstruct the data from the JSON. This
@@ -213,14 +218,14 @@ func (l *loader) readRecords(db *sql.DB, tableName string) (map[string]string, e
 		return nil, err
 	}
 
-	records := make(map[string]string)
+	records := make(map[string][]byte)
 
 	for {
 		if ok := rows.Next(); !ok {
 			break
 		}
 		var handle string
-		var data string
+		var data []byte
 		if err := rows.Scan(&handle, &data); err != nil {
 			return records, err
 		}
