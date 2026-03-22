@@ -20,6 +20,27 @@ func (l *loader) unmarshalRecords() error {
 			return err
 		}
 	}
+
+	for handle, data := range l.eventRecords {
+		event, ok := l.events[handle]
+		if !ok {
+			return fmt.Errorf("unmarshal has record but no event: %s", handle)
+		}
+		if err := json.Unmarshal(data, event, opts); err != nil {
+			return err
+		}
+	}
+
+	for handle, data := range l.placeRecords {
+		place, ok := l.places[handle]
+		if !ok {
+			return fmt.Errorf("unmarshal has record but no place: %s", handle)
+		}
+		if err := json.Unmarshal(data, place, opts); err != nil {
+			return err
+		}
+	}
+
 	for handle, data := range l.sourceRecords {
 		source, ok := l.sources[handle]
 		if !ok {
@@ -33,11 +54,17 @@ func (l *loader) unmarshalRecords() error {
 }
 
 func grampsUnmarshalOptions(l *loader) jsontext.Options {
-	return json.WithUnmarshalers(
+	unmarshalers := json.WithUnmarshalers(
 		json.JoinUnmarshalers(
 			json.UnmarshalFromFunc(unmarshalTime),
+			json.UnmarshalFromFunc(l.unmarshalPlaceRef),
 			json.UnmarshalFromFunc(l.unmarshalSourceRef),
 		))
+	return json.JoinOptions(
+		json.DefaultOptionsV2(),
+		// json.OmitZeroStructFields(true),
+		unmarshalers,
+	)
 }
 
 // unmarshalTime unmarshals a time.Time from Gramps JSON, which encodes each
@@ -49,6 +76,27 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 		return err
 	}
 	*t = time.Unix(token.Int(), 0)
+	return nil
+}
+
+func (l *loader) unmarshalPlaceRef(d *jsontext.Decoder, s *gen.PlaceRef) error {
+	k := d.PeekKind()
+	if k != jsontext.KindString {
+		return fmt.Errorf("could not unmarshal as place handle: %s", k)
+	}
+	token, err := d.ReadToken()
+	if err != nil {
+		return err
+	}
+	handle := token.String()
+	if handle == "" {
+		return nil
+	}
+	place, ok := l.places[handle]
+	if !ok {
+		return fmt.Errorf("could not find referenced place: %s", handle)
+	}
+	s.Place = place
 	return nil
 }
 

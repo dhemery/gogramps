@@ -8,3 +8,5 @@ type Citation struct {
 	Confidence   int       `json:"confidence"`
 	// Unknown      map[string]any `json:",unknown"`
 }
+
+

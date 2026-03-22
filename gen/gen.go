@@ -28,15 +28,9 @@ type GrampsObject struct {
 	ID string `json:"gramps_id"`
 }
 
-type Event struct{}
 type Family struct{}
 type Media struct{}
 type Note struct{}
 type Person struct{}
-type Place struct{}
 type Repository struct{}
 type Tag struct{}
-
-type SourceRef struct {
-	Source *Source
-}
