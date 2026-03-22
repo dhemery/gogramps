@@ -1,5 +1,6 @@
 package gen
 
 type Note struct {
-	GrampsObject
+	GrampsObject `json:",inline"`
+	Format       int `json:"format"`
 }
