@@ -2,8 +2,10 @@
 package gen
 
 type Gen struct {
+	Citations []*Citation
 	People []*Person
 }
 
-type Person struct {
-}
+type Citation struct{}
+
+type Person struct{}

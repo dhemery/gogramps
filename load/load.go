@@ -19,16 +19,31 @@ func Gen(fname string) (*gen.Gen, error) {
 }
 
 type loader struct {
-	gen           *gen.Gen
-	people        map[string]*gen.Person
-	personRecords map[string]string
+	gen *gen.Gen
+
+	citations map[string]*gen.Citation
+	people    map[string]*gen.Person
+
+	citationRecords   map[string]string
+	eventRecords      map[string]string
+	familyRecords     map[string]string
+	mediaRecords      map[string]string
+	noteRecords       map[string]string
+	personRecords     map[string]string
+	placeRecords      map[string]string
+	repositoryRecords map[string]string
+	sourceRecords     map[string]string
+	tagRecords        map[string]string
 }
 
 func newLoader() *loader {
 	return &loader{
-		gen: new(gen.Gen),
-		personRecords: map[string]string{},
-		people: map[string]*gen.Person{},
+		gen:             new(gen.Gen),
+		citationRecords: map[string]string{},
+		personRecords:   map[string]string{},
+
+		citations: map[string]*gen.Citation{},
+		people:    map[string]*gen.Person{},
 	}
 }
 
@@ -38,6 +53,24 @@ func (l *loader) load(fname string) error {
 		return err
 	}
 	defer db.Close()
+
+	// Citation
+	// Event
+	// Family
+	// Media
+	// Note
+
+	citationRecords, err := l.readRecords(db, "person")
+	l.citationRecords = citationRecords
+	if err != nil {
+		return err
+	}
+
+	for handle := range l.citationRecords {
+		c := new(gen.Citation)
+		l.citations[handle] = c
+		l.gen.Citations = append(l.gen.Citations, c)
+	}
 
 	personRecords, err := l.readRecords(db, "person")
 	l.personRecords = personRecords
@@ -50,6 +83,12 @@ func (l *loader) load(fname string) error {
 		l.people[handle] = p
 		l.gen.People = append(l.gen.People, p)
 	}
+
+	// Place
+	// Reference? I think this is a redundant table of all references.
+	// Repository
+	// Source
+	// Tag
 
 	return nil
 }
@@ -81,4 +120,3 @@ func (l *loader) readRecords(db *sql.DB, tableName string) (map[string]string, e
 	}
 	return records, nil
 }
-

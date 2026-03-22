@@ -1,7 +1,8 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -21,7 +22,7 @@ func main() {
 		exitError(err)
 	}
 
-	j, err := json.Marshal(g)
+	j, err := json.Marshal(g, jsontext.WithIndent("  "))
 	if err != nil {
 		exitError(err)
 	}
