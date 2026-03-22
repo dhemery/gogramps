@@ -97,79 +97,57 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 	return nil
 }
 
-func (l *loader) unmarshalPersonRef(d *jsontext.Decoder, r *gen.PersonRef) error {
+func unmarshalRef[V any](name string, d *jsontext.Decoder, values map[string]*V) (*V, error) {
 	k := d.PeekKind()
 	if k != jsontext.KindString {
-		return fmt.Errorf("could not unmarshal as person handle: %s", k)
+		return nil, fmt.Errorf("can not unmarshal %s as %s handle", k, name)
 	}
 	token, err := d.ReadToken()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	handle := token.String()
 	if handle == "" {
-		return nil
+		return nil, nil
 	}
-	person, ok := l.people[handle]
+	value, ok := values[handle]
 	if !ok {
-		return fmt.Errorf("could not find referenced person: %s", handle)
+		return nil, fmt.Errorf("can not find %s referenced by handle %s",name, handle)
+	}
+	return value, nil
+}
+
+func (l *loader) unmarshalPersonRef(d *jsontext.Decoder, r *gen.PersonRef) error {
+	person, err := unmarshalRef("person", d, l.people)
+	if err != nil {
+		return err
 	}
 	r.Person = person
 	return nil
 }
 
 func (l *loader) unmarshalPlaceRef(d *jsontext.Decoder, r *gen.PlaceRef) error {
-	k := d.PeekKind()
-	if k != jsontext.KindString {
-		return fmt.Errorf("could not unmarshal as place handle: %s", k)
-	}
-	token, err := d.ReadToken()
+	place, err := unmarshalRef("place", d, l.places)
 	if err != nil {
 		return err
-	}
-	handle := token.String()
-	if handle == "" {
-		return nil
-	}
-	place, ok := l.places[handle]
-	if !ok {
-		return fmt.Errorf("could not find referenced place: %s", handle)
 	}
 	r.Place = place
 	return nil
 }
 
 func (l *loader) unmarshalSourceRef(d *jsontext.Decoder, r *gen.SourceRef) error {
-	k := d.PeekKind()
-	if k != jsontext.KindString {
-		return fmt.Errorf("could not unmarshal as source handle: %s", k)
-	}
-	token, err := d.ReadToken()
+	source, err := unmarshalRef("source", d, l.sources)
 	if err != nil {
 		return err
-	}
-	handle := token.String()
-	source, ok := l.sources[handle]
-	if !ok {
-		return fmt.Errorf("could not find referenced source: %s", handle)
 	}
 	r.Source = source
 	return nil
 }
 
 func (l *loader) unmarshalTagRef(d *jsontext.Decoder, r *gen.TagRef) error {
-	k := d.PeekKind()
-	if k != jsontext.KindString {
-		return fmt.Errorf("could not unmarshal as tag handle: %s", k)
-	}
-	token, err := d.ReadToken()
+	tag, err := unmarshalRef("tag", d, l.tags)
 	if err != nil {
 		return err
-	}
-	handle := token.String()
-	tag, ok := l.tags[handle]
-	if !ok {
-		return fmt.Errorf("could not find referenced tag: %s", handle)
 	}
 	r.Tag = tag
 	return nil
