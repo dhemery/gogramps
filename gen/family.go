@@ -6,7 +6,8 @@ type Family struct {
 	Complete     int              `json:"complete"`
 	Mother       PersonHandle     `json:"mother_handle"`
 	Father       PersonHandle     `json:"father_handle"`
-	Media        []MediaRef       `json:"media_list"`
+	Attributes   []AttributeRef   `json:"attribute_list"`
 	Citations    []CitationHandle `json:"citation_list"`
+	Media        []MediaRef       `json:"media_list"`
 	Notes        []NoteHandle     `json:"note_lis1t"`
 }
