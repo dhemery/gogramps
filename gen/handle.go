@@ -2,6 +2,18 @@ package gen
 
 import "encoding/json/jsontext"
 
+type CitationHandle struct {
+	Value *Citation
+}
+
+func (h *CitationHandle) MarshalJSONTo(e *jsontext.Encoder) error {
+	var handle string
+	if h.Value != nil {
+		handle = h.Value.Handle
+	}
+	return e.WriteToken(jsontext.String(handle))
+}
+
 type NoteHandle struct {
 	Value *Note
 }

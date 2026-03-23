@@ -7,5 +7,6 @@ type Place struct {
 	Code         string       `json:"code"`
 	Latitude     string       `json:"lat"`
 	Longitude    string       `json:"long"`
+	Citations    []CitationHandle `json:"citation_list"`
 	Notes        []NoteHandle `json:"note_list"`
 }

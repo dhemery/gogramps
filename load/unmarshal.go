@@ -73,6 +73,7 @@ func grampsUnmarshalOptions(l *loader) jsontext.Options {
 	unmarshalers := json.WithUnmarshalers(
 		json.JoinUnmarshalers(
 			json.UnmarshalFromFunc(unmarshalTime),
+			json.UnmarshalFromFunc(l.unmarshalCitationHandle),
 			json.UnmarshalFromFunc(l.unmarshalNoteHandle),
 			json.UnmarshalFromFunc(l.unmarshalPersonHandle),
 			json.UnmarshalFromFunc(l.unmarshalPlaceHandle),
@@ -116,6 +117,15 @@ func unmarshalHandle[V any](name string, d *jsontext.Decoder, values map[string]
 		return nil, fmt.Errorf("can not find %s referenced by handle %s", name, handle)
 	}
 	return value, nil
+}
+
+func (l *loader) unmarshalCitationHandle(d *jsontext.Decoder, r *gen.CitationHandle) error {
+	citation, err := unmarshalHandle("citation", d, l.citations)
+	if err != nil {
+		return err
+	}
+	r.Value = citation
+	return nil
 }
 
 func (l *loader) unmarshalNoteHandle(d *jsontext.Decoder, r *gen.NoteHandle) error {

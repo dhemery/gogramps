@@ -7,5 +7,6 @@ type Media struct {
 	MimeType     string       `json:"mime"`
 	Path         string       `json:"path"`
 	Checksum     string       `json:"checksum"`
+	Citations    []CitationHandle `json:"citation_list"`
 	Notes        []NoteHandle `json:"note_list"`
 }
