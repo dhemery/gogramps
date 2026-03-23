@@ -10,4 +10,5 @@ type Family struct {
 	Citations    []CitationHandle `json:"citation_list"`
 	Media        []MediaRef       `json:"media_list"`
 	Notes        []NoteHandle     `json:"note_lis1t"`
+	Tags         []TagHandle      `json:"tag_list"`
 }

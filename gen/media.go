@@ -10,4 +10,5 @@ type Media struct {
 	Attributes   []AttributeRef   `json:"attribute_list"`
 	Citations    []CitationHandle `json:"citation_list"`
 	Notes        []NoteHandle     `json:"note_list"`
+	Tags         []TagHandle      `json:"tag_list"`
 }

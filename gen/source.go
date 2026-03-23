@@ -10,4 +10,5 @@ type Source struct {
 	Attributes   []AttributeRef `json:"attribute_list"`
 	Media        []MediaRef     `json:"media_list"`
 	Notes        []NoteHandle   `json:"note_list"`
+	Tags         []TagHandle    `json:"tag_list"`
 }

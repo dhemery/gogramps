@@ -2,5 +2,7 @@ package gen
 
 type Note struct {
 	GrampsObject `json:",inline"`
-	Format       int `json:"format"`
+	Private      bool        `json:"private"`
+	Format       int         `json:"format"`
+	Tags         []TagHandle `json:"tag_list"`
 }

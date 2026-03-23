@@ -10,4 +10,5 @@ type Place struct {
 	Citations    []CitationHandle `json:"citation_list"`
 	Media        []MediaRef       `json:"media_list"`
 	Notes        []NoteHandle     `json:"note_list"`
+	Tags         []TagHandle      `json:"tag_list"`
 }
