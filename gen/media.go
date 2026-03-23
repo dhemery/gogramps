@@ -3,6 +3,7 @@ package gen
 type Media struct {
 	GrampsObject `json:",inline"`
 	Private      bool             `json:"private"`
+	Date         Date             `json:"date"`
 	Description  string           `json:"desc"`
 	MimeType     string           `json:"mime"`
 	Path         string           `json:"path"`

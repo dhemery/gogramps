@@ -72,6 +72,7 @@ func unmarshalRecords[T any](name string, records map[string][]byte, values map[
 func grampsUnmarshalOptions(l *loader) jsontext.Options {
 	unmarshalers := json.WithUnmarshalers(
 		json.JoinUnmarshalers(
+			json.UnmarshalFromFunc(unmarshalDateSpan),
 			json.UnmarshalFromFunc(unmarshalTime),
 			json.UnmarshalFromFunc(l.unmarshalCitationHandle),
 			json.UnmarshalFromFunc(l.unmarshalFamilyHandle),
@@ -98,6 +99,45 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 		return err
 	}
 	*t = time.Unix(token.Int(), 0)
+	return nil
+}
+
+func unmarshalDateSpan(d *jsontext.Decoder, s *gen.DateSpan) error {
+	token, err := d.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != jsontext.KindBeginArray {
+		return fmt.Errorf("cannot unmarshal DateSpan from %s %s",
+			token.Kind(), token)
+	}
+
+	if err = json.UnmarshalDecode(d, &s.Start.Day); err != nil {
+		return fmt.Errorf("cannot unmarshal DateSpan day: %s", err)
+	}
+
+	if err = json.UnmarshalDecode(d, &s.Start.Month); err != nil {
+		return fmt.Errorf("cannot unmarshal DateSpan month: %s", err)
+	}
+
+	if err = json.UnmarshalDecode(d, &s.Start.Year); err != nil {
+		return fmt.Errorf("cannot unmarshal DateSpan year: %s", err)
+	}
+
+	if err = json.UnmarshalDecode(d, &s.Start.Dual); err != nil {
+		return fmt.Errorf("cannot unmarshal DateSpan.Start.Dual : %s", err)
+	}
+
+	// TODO: Peek, and if number, decode s.End.
+
+	token, err = d.ReadToken()
+	if err != nil {
+		return err
+	}
+	if token.Kind() != jsontext.KindEndArray {
+		return fmt.Errorf("unexpected token at end of DateSpan %s %s",
+			token.Kind(), token)
+	}
 	return nil
 }
 
