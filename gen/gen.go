@@ -27,4 +27,3 @@ type GrampsObject struct {
 	TableObject
 	ID string `json:"gramps_id"`
 }
-

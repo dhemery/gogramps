@@ -73,10 +73,11 @@ func grampsUnmarshalOptions(l *loader) jsontext.Options {
 	unmarshalers := json.WithUnmarshalers(
 		json.JoinUnmarshalers(
 			json.UnmarshalFromFunc(unmarshalTime),
-			json.UnmarshalFromFunc(l.unmarshalPersonRef),
-			json.UnmarshalFromFunc(l.unmarshalPlaceRef),
-			json.UnmarshalFromFunc(l.unmarshalSourceRef),
-			json.UnmarshalFromFunc(l.unmarshalTagRef),
+			json.UnmarshalFromFunc(l.unmarshalNoteHandle),
+			json.UnmarshalFromFunc(l.unmarshalPersonHandle),
+			json.UnmarshalFromFunc(l.unmarshalPlaceHandle),
+			json.UnmarshalFromFunc(l.unmarshalSourceHandle),
+			json.UnmarshalFromFunc(l.unmarshalTagHandle),
 		))
 	return json.JoinOptions(
 		json.DefaultOptionsV2(),
@@ -97,7 +98,7 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 	return nil
 }
 
-func unmarshalRef[V any](name string, d *jsontext.Decoder, values map[string]*V) (*V, error) {
+func unmarshalHandle[V any](name string, d *jsontext.Decoder, values map[string]*V) (*V, error) {
 	k := d.PeekKind()
 	if k != jsontext.KindString {
 		return nil, fmt.Errorf("can not unmarshal %s as %s handle", k, name)
@@ -112,43 +113,52 @@ func unmarshalRef[V any](name string, d *jsontext.Decoder, values map[string]*V)
 	}
 	value, ok := values[handle]
 	if !ok {
-		return nil, fmt.Errorf("can not find %s referenced by handle %s",name, handle)
+		return nil, fmt.Errorf("can not find %s referenced by handle %s", name, handle)
 	}
 	return value, nil
 }
 
-func (l *loader) unmarshalPersonRef(d *jsontext.Decoder, r *gen.PersonRef) error {
-	person, err := unmarshalRef("person", d, l.people)
+func (l *loader) unmarshalNoteHandle(d *jsontext.Decoder, r *gen.NoteHandle) error {
+	note, err := unmarshalHandle("note", d, l.notes)
 	if err != nil {
 		return err
 	}
-	r.Person = person
+	r.Value = note
 	return nil
 }
 
-func (l *loader) unmarshalPlaceRef(d *jsontext.Decoder, r *gen.PlaceRef) error {
-	place, err := unmarshalRef("place", d, l.places)
+func (l *loader) unmarshalPersonHandle(d *jsontext.Decoder, r *gen.PersonHandle) error {
+	person, err := unmarshalHandle("person", d, l.people)
 	if err != nil {
 		return err
 	}
-	r.Place = place
+	r.Value = person
 	return nil
 }
 
-func (l *loader) unmarshalSourceRef(d *jsontext.Decoder, r *gen.SourceRef) error {
-	source, err := unmarshalRef("source", d, l.sources)
+func (l *loader) unmarshalPlaceHandle(d *jsontext.Decoder, r *gen.PlaceHandle) error {
+	place, err := unmarshalHandle("place", d, l.places)
 	if err != nil {
 		return err
 	}
-	r.Source = source
+	r.Value = place
 	return nil
 }
 
-func (l *loader) unmarshalTagRef(d *jsontext.Decoder, r *gen.TagRef) error {
-	tag, err := unmarshalRef("tag", d, l.tags)
+func (l *loader) unmarshalSourceHandle(d *jsontext.Decoder, r *gen.SourceHandle) error {
+	source, err := unmarshalHandle("source", d, l.sources)
 	if err != nil {
 		return err
 	}
-	r.Tag = tag
+	r.Value = source
+	return nil
+}
+
+func (l *loader) unmarshalTagHandle(d *jsontext.Decoder, r *gen.TagHandle) error {
+	tag, err := unmarshalHandle("tag", d, l.tags)
+	if err != nil {
+		return err
+	}
+	r.Value = tag
 	return nil
 }
