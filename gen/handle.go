@@ -14,6 +14,18 @@ func (h *CitationHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	return e.WriteToken(jsontext.String(handle))
 }
 
+type FamilyHandle struct {
+	Value *Family
+}
+
+func (h *FamilyHandle) MarshalJSONTo(e *jsontext.Encoder) error {
+	var handle string
+	if h.Value != nil {
+		handle = h.Value.Handle
+	}
+	return e.WriteToken(jsontext.String(handle))
+}
+
 type NoteHandle struct {
 	Value *Note
 }
