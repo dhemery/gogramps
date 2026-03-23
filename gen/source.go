@@ -7,5 +7,6 @@ type Source struct {
 	Abbreviation string       `json:"abbreviation"`
 	Author       string       `json:"author"`
 	PubInfo      string       `json:"pub_info"`
+	Media        []MediaRef   `json:"media_list"`
 	Notes        []NoteHandle `json:"note_list"`
 }
