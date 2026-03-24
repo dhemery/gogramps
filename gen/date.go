@@ -42,24 +42,24 @@ const (
 )
 
 type DualDate struct {
-	Year  int16 `json:"year"`
-	Month int8  `json:"month"`
-	Day   int8  `json:"day"`
-	Dual  bool  `json:"dual"` // Whether Date is a dual date, e.g. 1733/34
+	Year  int16 `json:"year,omitzero"`
+	Month int8  `json:"month,omitzero"`
+	Day   int8  `json:"day,omitzero"`
+	Dual  bool  `json:"dual,omitzero"` // Whether Date is a dual date, e.g. 1733/34
 }
 
 type DateRange struct {
-	Start DualDate `json:"start"`
-	End   DualDate `json:"end"`
+	Start DualDate `json:"start,omitzero"`
+	End   DualDate `json:"end,omitzero"`
 }
 
 type Date struct {
 	// Format ???
-	Calendar CalendarCode `json:"calendar"`
-	Span     DateRange    `json:"dateval"`
-	Modifier ModifierCode `json:"modifier"`
-	NewYear  NewYearCode  `json:"newyear"`
-	Quality  QualityFlags `json:"quality"`
-	SortVal  int          `json:"sortval"`
-	Text     string       `json:"text"`
+	Calendar CalendarCode `json:"calendar,omitzero"`
+	Span     DateRange    `json:"dateval,omitzero"`
+	Modifier ModifierCode `json:"modifier,omitzero"`
+	NewYear  NewYearCode  `json:"newyear,omitzero"`
+	Quality  QualityFlags `json:"quality,omitzero"`
+	SortVal  int          `json:"sortval,omitzero"`
+	Text     string       `json:"text,omitzero"`
 }

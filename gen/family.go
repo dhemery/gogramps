@@ -11,22 +11,22 @@ const (
 )
 
 type FamilyType struct {
-	Code   FamilyTypeCode `json:"value"`
-	Custom string         `json:"string"`
+	Code   FamilyTypeCode `json:"value,omitzero"`
+	Custom string         `json:"string,omitzero"`
 }
 
 type Family struct {
 	GrampsObject `json:",inline"`
-	Private      bool             `json:"private"`
-	Complete     int              `json:"complete"`
-	Type         FamilyType       `json:"type"`
-	Mother       PersonHandle     `json:"mother_handle"`
-	Father       PersonHandle     `json:"father_handle"`
-	Children     []ChildRef       `json:"child_ref_list"`
-	Attributes   []AttributeRef   `json:"attribute_list"`
-	Citations    []CitationHandle `json:"citation_list"`
-	Events       []EventRef       `json:"event_ref_list"`
-	Media        []MediaRef       `json:"media_list"`
-	Notes        []NoteHandle     `json:"note_lis1t"`
-	Tags         []TagHandle      `json:"tag_list"`
+	Private      bool             `json:"private,omitzero"`
+	Complete     int              `json:"complete,omitzero"`
+	Type         FamilyType       `json:"type,omitzero"`
+	Mother       PersonHandle     `json:"mother_handle,omitzero"`
+	Father       PersonHandle     `json:"father_handle,omitzero"`
+	Children     []ChildRef       `json:"child_ref_list,omitempty"`
+	Attributes   []AttributeRef   `json:"attribute_list,omitempty"`
+	Citations    []CitationHandle `json:"citation_list,omitempty"`
+	Events       []EventRef       `json:"event_ref_list,omitempty"`
+	Media        []MediaRef       `json:"media_list,omitempty"`
+	Notes        []NoteHandle     `json:"note_list,omitempty"`
+	Tags         []TagHandle      `json:"tag_list,omitempty"`
 }

@@ -2,13 +2,13 @@ package gen
 
 type Citation struct {
 	GrampsObject `json:",inline"`
-	Private      bool           `json:"private"`
-	Source       SourceHandle   `json:"source_handle"`
-	Page         string         `json:"page"`
+	Private      bool           `json:"private,omitzero"`
+	Source       SourceHandle   `json:"source_handle,omitzero"`
+	Page         string         `json:"page,omitzero"`
 	Confidence   int            `json:"confidence"`
-	Date         Date           `json:"date"`
-	Attributes   []AttributeRef `json:"attribute_list"`
-	Media        []MediaRef     `json:"media_list"`
-	Notes        []NoteHandle   `json:"note_list"`
-	Tags         []TagHandle    `json:"tag_list"`
+	Date         Date           `json:"date,omitzero"`
+	Attributes   []AttributeRef `json:"attribute_list,omitempty"`
+	Media        []MediaRef     `json:"media_list,omitempty"`
+	Notes        []NoteHandle   `json:"note_list,omitempty"`
+	Tags         []TagHandle    `json:"tag_list,omitempty"`
 }

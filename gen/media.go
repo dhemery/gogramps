@@ -2,14 +2,14 @@ package gen
 
 type Media struct {
 	GrampsObject `json:",inline"`
-	Private      bool             `json:"private"`
-	Date         Date             `json:"date"`
-	Description  string           `json:"desc"`
-	MimeType     string           `json:"mime"`
+	Private      bool             `json:"private,omitzero"`
+	Date         Date             `json:"date,omitzero"`
+	Description  string           `json:"desc,omitzero"`
+	MimeType     string           `json:"mime,omitzero"`
 	Path         string           `json:"path"`
 	Checksum     string           `json:"checksum"`
-	Attributes   []AttributeRef   `json:"attribute_list"`
-	Citations    []CitationHandle `json:"citation_list"`
-	Notes        []NoteHandle     `json:"note_list"`
-	Tags         []TagHandle      `json:"tag_list"`
+	Attributes   []AttributeRef   `json:"attribute_list,omitempty"`
+	Citations    []CitationHandle `json:"citation_list,omitempty"`
+	Notes        []NoteHandle     `json:"note_list,omitempty"`
+	Tags         []TagHandle      `json:"tag_list,omitempty"`
 }
