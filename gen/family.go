@@ -1,9 +1,9 @@
 package gen
 
-type FamilyCode int
+type FamilyTypeCode int
 
 const (
-	FamMarried = FamilyCode(iota)
+	FamMarried = FamilyTypeCode(iota)
 	FamUnmarried
 	FamCivilUnion
 	FamUnknown
@@ -11,8 +11,8 @@ const (
 )
 
 type FamilyType struct {
-	Code   FamilyCode `json:"value"`
-	Custom string     `json:"string"`
+	Code   FamilyTypeCode `json:"value"`
+	Custom string         `json:"string"`
 }
 
 type Family struct {
@@ -24,6 +24,7 @@ type Family struct {
 	Father       PersonHandle     `json:"father_handle"`
 	Attributes   []AttributeRef   `json:"attribute_list"`
 	Citations    []CitationHandle `json:"citation_list"`
+	Events       []EventRef       `json:"event_ref_list"`
 	Media        []MediaRef       `json:"media_list"`
 	Notes        []NoteHandle     `json:"note_lis1t"`
 	Tags         []TagHandle      `json:"tag_list"`

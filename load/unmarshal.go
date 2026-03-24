@@ -75,6 +75,7 @@ func grampsUnmarshalOptions(l *loader) jsontext.Options {
 			json.UnmarshalFromFunc(unmarshalDateSpan),
 			json.UnmarshalFromFunc(unmarshalTime),
 			json.UnmarshalFromFunc(l.unmarshalCitationHandle),
+			json.UnmarshalFromFunc(l.unmarshalEventHandle),
 			json.UnmarshalFromFunc(l.unmarshalFamilyHandle),
 			json.UnmarshalFromFunc(l.unmarshalMediaHandle),
 			json.UnmarshalFromFunc(l.unmarshalNoteHandle),
@@ -167,6 +168,15 @@ func (l *loader) unmarshalCitationHandle(d *jsontext.Decoder, r *gen.CitationHan
 		return err
 	}
 	r.Value = citation
+	return nil
+}
+
+func (l *loader) unmarshalEventHandle(d *jsontext.Decoder, r *gen.EventHandle) error {
+	event, err := unmarshalHandle("event", d, l.events)
+	if err != nil {
+		return err
+	}
+	r.Value = event
 	return nil
 }
 
