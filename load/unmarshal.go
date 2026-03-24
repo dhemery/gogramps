@@ -114,22 +114,39 @@ func unmarshalDateSpan(d *jsontext.Decoder, s *gen.DateRange) error {
 	}
 
 	if err = json.UnmarshalDecode(d, &s.Start.Day); err != nil {
-		return fmt.Errorf("cannot unmarshal DateSpan day: %s", err)
+		return fmt.Errorf("cannot unmarshal DateSpan.Start.Day: %s", err)
 	}
 
 	if err = json.UnmarshalDecode(d, &s.Start.Month); err != nil {
-		return fmt.Errorf("cannot unmarshal DateSpan month: %s", err)
+		return fmt.Errorf("cannot unmarshal DateSpan.Start.Month: %s", err)
 	}
 
 	if err = json.UnmarshalDecode(d, &s.Start.Year); err != nil {
-		return fmt.Errorf("cannot unmarshal DateSpan year: %s", err)
+		return fmt.Errorf("cannot unmarshal DateSpan.Start.Year: %s", err)
 	}
 
 	if err = json.UnmarshalDecode(d, &s.Start.Dual); err != nil {
 		return fmt.Errorf("cannot unmarshal DateSpan.Start.Dual : %s", err)
 	}
 
-	// TODO: Peek, and if number, decode s.End.
+	if d.PeekKind() == jsontext.KindNumber {
+		if err = json.UnmarshalDecode(d, &s.End.Day); err != nil {
+			return fmt.Errorf("cannot unmarshal DateSpan.End.Day: %s", err)
+		}
+
+		if err = json.UnmarshalDecode(d, &s.End.Month); err != nil {
+			return fmt.Errorf("cannot unmarshal DateSpan.End.Month: %s", err)
+		}
+
+		if err = json.UnmarshalDecode(d, &s.End.Year); err != nil {
+			return fmt.Errorf("cannot unmarshal DateSpan.End.Year: %s", err)
+		}
+
+		if err = json.UnmarshalDecode(d, &s.End.Dual); err != nil {
+			return fmt.Errorf("cannot unmarshal DateSpan.End.Dual : %s", err)
+		}
+
+	}
 
 	token, err = d.ReadToken()
 	if err != nil {

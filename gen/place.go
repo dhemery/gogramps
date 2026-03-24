@@ -10,9 +10,10 @@ type PlaceType struct {
 type Place struct {
 	GrampsObject `json:",inline"`
 	Private      bool             `json:"private,omitzero"`
+	Title        string           `json:"title,omitzero"`
 	Name         PlaceName        `json:"name,omitzero"`
 	Type         PlaceType        `json:"place_type,omitzero"`
-	Title        string           `json:"title,omitzero"`
+	EnclosedBy   []PlaceRef       `json:"placeref_list,omitempty"`
 	Code         string           `json:"code,omitzero"`
 	Latitude     string           `json:"lat,omitzero"`
 	Longitude    string           `json:"long,omitzero"`

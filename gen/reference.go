@@ -50,3 +50,8 @@ type MediaRef struct {
 	Citations []CitationHandle `json:"citation_list,omitempty"`
 	Notes     []NoteHandle     `json:"note_list,omitempty"`
 }
+
+type PlaceRef struct {
+	Place PlaceHandle `json:"ref,omitzero"`
+	Date  Date        `json:"date,omitzero"`
+}
