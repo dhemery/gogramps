@@ -51,7 +51,14 @@ type MediaRef struct {
 	Notes     []NoteHandle     `json:"note_list,omitempty"`
 }
 
+type PersonRef struct {
+	Person       PersonHandle     `json:"ref,omitzero"`
+	Relationship string           `json:"rel,omitzero"`
+	Citations    []CitationHandle `json:"citation_list,omitempty"`
+	Notes        []NoteHandle     `json:"note_list,omitempty"`
+}
+
 type PlaceRef struct {
 	Place PlaceHandle `json:"ref,omitzero"`
-	Date  Date        `json:"date,omitzero"`
+	Date  DateValue   `json:"date,omitzero"`
 }

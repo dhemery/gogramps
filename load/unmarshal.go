@@ -72,7 +72,7 @@ func unmarshalRecords[T any](name string, records map[string][]byte, values map[
 func grampsUnmarshalOptions(l *loader) jsontext.Options {
 	unmarshalers := json.WithUnmarshalers(
 		json.JoinUnmarshalers(
-			json.UnmarshalFromFunc(unmarshalDateSpan),
+			json.UnmarshalFromFunc(unmarshalDateBounds),
 			json.UnmarshalFromFunc(unmarshalTime),
 			json.UnmarshalFromFunc(l.unmarshalCitationHandle),
 			json.UnmarshalFromFunc(l.unmarshalEventHandle),
@@ -103,7 +103,7 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 	return nil
 }
 
-func unmarshalDateSpan(d *jsontext.Decoder, s *gen.DateRange) error {
+func unmarshalDateBounds(d *jsontext.Decoder, s *gen.DateBounds) error {
 	token, err := d.ReadToken()
 	if err != nil {
 		return err

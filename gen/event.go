@@ -12,7 +12,7 @@ type Event struct {
 	Private      bool             `json:"private,omitzero"`
 	Type         EventType        `json:"type,omitzero"`
 	Description  string           `json:"description,omitzero"`
-	Date         Date             `json:"date,omitzero"`
+	Date         DateValue             `json:"date,omitzero"`
 	Place        PlaceHandle      `json:"place,omitzero"`
 	Attributes   []AttributeRef   `json:"attribute_list,omitempty"`
 	Citations    []CitationHandle `json:"citation_list,omitempty"`

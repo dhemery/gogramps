@@ -7,6 +7,7 @@ type Person struct {
 	Gender           int              `json:"gender"`
 	FamiliesAsParent []FamilyHandle   `json:"family_list,omitempty"`
 	FamiliesAsChild  []FamilyHandle   `json:"parent_family_list,omitempty"`
+	Associations     []PersonRef      `json:"person_ref_list"`
 	Attributes       []AttributeRef   `json:"attribute_list,omitempty"`
 	Citations        []CitationHandle `json:"citation_list,omitempty"`
 	Events           []EventRef       `json:"event_ref_list,omitempty"`
@@ -20,7 +21,7 @@ type PersonName struct {
 	Title     string           `json:"title,omitzero"`
 	Given     string           `json:"first_name,omitzero"`
 	Surnames  []Surname        `json:"surname_list"`
-	Date      Date             `json:"date,omitzero"`
+	Date      DateValue        `json:"date,omitzero"`
 	Call      string           `json:"call,omitzero"`
 	FamNick   string           `json:"famnick,omitzero"`
 	Nick      string           `json:"nick,omitzero"`

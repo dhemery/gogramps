@@ -41,22 +41,22 @@ const (
 	NewYearSep1
 )
 
-type DualDate struct {
+type Date struct {
 	Year  int16 `json:"year,omitzero"`
 	Month int8  `json:"month,omitzero"`
 	Day   int8  `json:"day,omitzero"`
 	Dual  bool  `json:"dual,omitzero"` // Whether Date is a dual date, e.g. 1733/34
 }
 
-type DateRange struct {
-	Start DualDate `json:"start,omitzero"`
-	End   DualDate `json:"end,omitzero"`
+type DateBounds struct {
+	Start Date `json:"start,omitzero"`
+	End   Date `json:"end,omitzero"`
 }
 
-type Date struct {
+type DateValue struct {
 	// Format ???
 	Calendar CalendarCode `json:"calendar,omitzero"`
-	Span     DateRange    `json:"dateval,omitzero"`
+	Bounds   DateBounds   `json:"dateval,omitzero"`
 	Modifier ModifierCode `json:"modifier,omitzero"`
 	NewYear  NewYearCode  `json:"newyear,omitzero"`
 	Quality  QualityFlags `json:"quality,omitzero"`

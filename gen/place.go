@@ -25,6 +25,6 @@ type Place struct {
 
 type PlaceName struct {
 	Name     string `json:"value,omitzero"`
-	Date     Date   `json:"date,omitzero"`
+	Date     DateValue   `json:"date,omitzero"`
 	Language string `json:"language,omitzero"`
 }
