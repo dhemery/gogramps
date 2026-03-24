@@ -1,8 +1,16 @@
 package gen
 
+type EventCode int
+
+type EventType struct {
+	Code   EventCode `json:"value"`
+	Custom string    `json:"string"`
+}
+
 type Event struct {
 	GrampsObject `json:",inline"`
 	Private      bool             `json:"private"`
+	Type         EventType        `json:"type"`
 	Description  string           `json:"description"`
 	Date         Date             `json:"date"`
 	Place        PlaceHandle      `json:"place"`

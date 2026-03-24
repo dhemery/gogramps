@@ -1,37 +1,45 @@
 package gen
 
-// Modifier Enum
-// MOD_NONE = 0  # CODE
-// MOD_BEFORE = 1
-// MOD_AFTER = 2
-// MOD_ABOUT = 3
-// MOD_RANGE = 4
-// MOD_SPAN = 5
-// MOD_TEXTONLY = 6
-// MOD_FROM = 7
-// MOD_TO = 8
+type ModifierCode int
+type QualityFlags int
+type CalendarCode int
+type NewYearCode int
 
-// Quality bit flags
-// QUAL_NONE = 0  # BITWISE
-// QUAL_ESTIMATED = 1
-// QUAL_CALCULATED = 2
-// # QUAL_INTERPRETED = 4 unused in source!!
+const (
+	ModNone = ModifierCode(iota)
+	ModBefore
+	ModAfter
+	ModAbout
+	ModRange
+	ModSpan
+	ModTextOnly
+	ModFrom
+	ModTo
+)
 
-// Calendar enum
-// CAL_GREGORIAN = 0  # CODE
-// CAL_JULIAN = 1
-// CAL_HEBREW = 2
-// CAL_FRENCH = 3
-// CAL_PERSIAN = 4
-// CAL_ISLAMIC = 5
-// CAL_SWEDISH = 6
-// CALENDARS = range(7)
+const (
+	QualNone = QualityFlags((0x1 << iota) >> 1)
+	QualEstimated
+	QualCalculated
+	QualInterpreted
+)
 
-// NewYear enum
-// NEWYEAR_JAN1 = 0  # CODE
-// NEWYEAR_MAR1 = 1
-// NEWYEAR_MAR25 = 2
-// NEWYEAR_SEP1 = 3
+const (
+	CalGregorian = CalendarCode(iota)
+	CalJulian
+	CalHebrew
+	CalFrench
+	CalPersian
+	CalIslamic
+	CalSwedish
+)
+
+const (
+	NewYearJan1 = NewYearCode(iota)
+	NewYearMar1
+	NewYearMar25
+	NewYearSep1
+)
 
 type DualDate struct {
 	Year  int16 `json:"year"`
@@ -40,18 +48,18 @@ type DualDate struct {
 	Dual  bool  `json:"dual"` // Whether Date is a dual date, e.g. 1733/34
 }
 
-type DateSpan struct {
+type DateRange struct {
 	Start DualDate `json:"start"`
 	End   DualDate `json:"end"`
 }
 
 type Date struct {
 	// Format ???
-	Calendar int      `json:"calendar"`
-	Span     DateSpan `json:"dateval"`
-	Modifier int      `json:"modifier"`
-	NewYear  int      `json:"newyear"`
-	Quality  int      `json:"quality"`
-	SortVal  int      `json:"sortval"`
-	Text     string   `json:"text"`
+	Calendar CalendarCode `json:"calendar"`
+	Span     DateRange    `json:"dateval"`
+	Modifier ModifierCode `json:"modifier"`
+	NewYear  NewYearCode  `json:"newyear"`
+	Quality  QualityFlags `json:"quality"`
+	SortVal  int          `json:"sortval"`
+	Text     string       `json:"text"`
 }

@@ -102,7 +102,7 @@ func unmarshalTime(d *jsontext.Decoder, t *time.Time) error {
 	return nil
 }
 
-func unmarshalDateSpan(d *jsontext.Decoder, s *gen.DateSpan) error {
+func unmarshalDateSpan(d *jsontext.Decoder, s *gen.DateRange) error {
 	token, err := d.ReadToken()
 	if err != nil {
 		return err
