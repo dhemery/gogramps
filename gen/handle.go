@@ -9,7 +9,7 @@ type CitationHandle struct {
 func (h *CitationHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -21,7 +21,7 @@ type EventHandle struct {
 func (h *EventHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -33,7 +33,7 @@ type FamilyHandle struct {
 func (h *FamilyHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -45,7 +45,7 @@ type MediaHandle struct {
 func (h *MediaHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -57,7 +57,7 @@ type NoteHandle struct {
 func (h *NoteHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -69,7 +69,7 @@ type PersonHandle struct {
 func (h *PersonHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -81,7 +81,7 @@ type PlaceHandle struct {
 func (h *PlaceHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
@@ -93,7 +93,7 @@ type SourceHandle struct {
 func (h *SourceHandle) MarshalJSONTo(e *jsontext.Encoder) error {
 	var handle string
 	if h.Value != nil {
-		handle = h.Value.Handle
+		handle = h.Value.ID
 	}
 	return e.WriteToken(jsontext.String(handle))
 }
