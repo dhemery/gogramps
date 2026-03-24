@@ -10,6 +10,7 @@ type PlaceType struct {
 type Place struct {
 	GrampsObject `json:",inline"`
 	Private      bool             `json:"private,omitzero"`
+	Name         PlaceName        `json:"name,omitzero"`
 	Type         PlaceType        `json:"place_type,omitzero"`
 	Title        string           `json:"title,omitzero"`
 	Code         string           `json:"code,omitzero"`
@@ -19,4 +20,10 @@ type Place struct {
 	Media        []MediaRef       `json:"media_list,omitempty"`
 	Notes        []NoteHandle     `json:"note_list,omitempty"`
 	Tags         []TagHandle      `json:"tag_list,omitempty"`
+}
+
+type PlaceName struct {
+	Name     string `json:"value,omitzero"`
+	Date     Date   `json:"date,omitzero"`
+	Language string `json:"language,omitzero"`
 }
