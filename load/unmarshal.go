@@ -86,7 +86,7 @@ func grampsUnmarshalOptions(l *loader) jsontext.Options {
 		))
 	return json.JoinOptions(
 		json.DefaultOptionsV2(),
-		// json.OmitZeroStructFields(true),
+		json.OmitZeroStructFields(true),
 		unmarshalers,
 	)
 }

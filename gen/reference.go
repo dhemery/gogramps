@@ -11,6 +11,23 @@ type AttributeRef struct {
 	Value string        `json:"value"`
 }
 
+type ParentRelCode int
+type ParentRel struct {
+	Code   ParentRelCode `json:"value"`
+	Custom string        `json:"string"`
+}
+
+// A ChildRef describes how the father and mother in a family relate to the
+// referred child.
+type ChildRef struct {
+	Private   bool             `json:"private"`
+	Child     PersonHandle     `json:"ref"`
+	FatherRel ParentRel        `json:"frel"`
+	MotherRel ParentRel        `json:"mrel"`
+	Citations []CitationHandle `json:"citation_list"`
+	Notes     []NoteHandle     `json:"note_list"`
+}
+
 type EventRoleCode int
 type EventRole struct {
 	Code   EventRoleCode `json:"value"`
